@@ -1,0 +1,2307 @@
+<!DOCTYPE html>
+<html lang="ES">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIBERIA - CEDIS | BALANCE DE OPERACIÓN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --red: #E11922;
+      --red-dark: #B81118;
+      --red-deep: #9E0B1E;
+      --yellow: #FFCC00;
+      --yellow-bright: #FFD100;
+      --white: #FFFFFF;
+      --bg: #F4F6F9;
+      --card: #FFFFFF;
+      --border: #CBD5E1;
+      --text: #1F2937;
+      --muted: #5A6577;
+      --alert-bg: #FDECEC;
+      --alert-text: #B81118;
+      --ok-bg: #E7F6EC;
+      --ok-text: #15803D;
+      --turno-bg: #FFF8D6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      text-transform: uppercase;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--red-deep) 0%, var(--red-dark) 48%, var(--red) 100%);
+      color: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 14px rgba(158, 11, 30, 0.26);
+      text-align: center;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 20px;
+      border-bottom: 3px solid var(--yellow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .oxxo-logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+      padding: 3px 6px;
+      border-radius: 9px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.24);
+      border: 2px solid var(--yellow);
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      letter-spacing: 0.09em;
+      color: var(--yellow-bright);
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: 0.03em;
+    }
+
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: var(--white);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .pill-warn {
+      background: var(--yellow);
+      border-color: var(--yellow-bright);
+      color: #111111;
+      font-weight: 800;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      text-align: center;
+      letter-spacing: 0.03em;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: #F1F5F9;
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 10.5px;
+      border-radius: 6px;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: var(--white);
+      border-color: var(--red-dark);
+      box-shadow: 0 2px 6px rgba(225, 25, 34, 0.22);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--red-dark);
+    }
+
+    .btn-yellow {
+      background: var(--yellow);
+      color: #111111;
+      border-color: var(--yellow-bright);
+      font-weight: 800;
+      box-shadow: 0 2px 7px rgba(255, 204, 0, 0.35);
+    }
+
+    .btn-yellow:hover:not(:disabled) {
+      background: var(--yellow-bright);
+    }
+
+    /* BARRA DE PESTAÑAS REDISEÑADA TIPO PÍLDORAS / TARJETAS ELEVADAS */
+    nav#main-nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px 10px;
+      background: linear-gradient(180deg, #8B0919 0%, var(--red-deep) 100%);
+      border-bottom: 1px solid rgba(255, 204, 0, 0.35);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .tab-btn {
+      position: relative;
+      background: rgba(255, 255, 255, 0.10);
+      color: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 9px;
+      padding: 7px 13px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.20);
+      border-color: var(--yellow);
+      color: var(--white);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.24);
+    }
+
+    .tab-btn.active {
+      background: var(--yellow);
+      color: var(--red-deep);
+      border-color: var(--yellow-bright);
+      font-weight: 900;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 204, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    main {
+      width: 100%;
+      max-width: 1680px;
+      margin: 18px auto;
+      padding: 0 12px 40px;
+      text-align: center;
+    }
+
+    .tab-panel {
+      display: none;
+      text-align: center;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .tab-panel * {
+      text-align: center;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 15px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+      text-align: center;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+    }
+
+    .kpi-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .kpi-val {
+      font-size: 22px;
+      font-weight: 900;
+      margin: 4px 0;
+      color: #111827;
+    }
+
+    .kpi-val.red {
+      color: var(--red);
+    }
+
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    h2.section-title {
+      text-align: center;
+      font-size: 19px;
+      font-weight: 800;
+      margin-bottom: 5px;
+      color: #111827;
+    }
+
+    p.section-sub {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .controls-inline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    label.field {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="datetime-local"],
+    select,
+    textarea {
+      border: 1px solid #CBD5E1;
+      border-radius: 7px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--white);
+      text-align: center;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow: visible;
+    }
+
+    .table-wrap.force-scroll {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1.5px solid var(--border);
+      font-size: 12px;
+      margin: 0 auto;
+      table-layout: auto;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 6px 6px;
+      text-align: center !important;
+      vertical-align: middle;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    th {
+      background: #FFF5F5;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--red-dark);
+      text-transform: uppercase;
+    }
+
+    td.left,
+    th.left {
+      text-align: center !important;
+    }
+
+    tr.turno-row {
+      background: var(--turno-bg);
+    }
+
+    tr.total-row td {
+      font-weight: 800;
+      background: #F1F5F9;
+    }
+
+    tr.turno-sum-row td {
+      font-weight: 800;
+      background: #FFE999;
+    }
+
+    tr.pct-row td {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      background: #FAFAFA;
+    }
+
+    tr[draggable="true"] {
+      cursor: grab;
+    }
+
+    tr.dragging {
+      opacity: 0.45;
+    }
+
+    .heat-1 { background: #FDE8E8; }
+    .heat-2 { background: #FBD5D5; }
+    .heat-3 { background: #F8B4B4; font-weight: 800; }
+
+    .badge {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 800;
+      display: inline-block;
+    }
+
+    .badge-ok { background: var(--ok-bg); color: var(--ok-text); border: 1px solid #BBF7D0; }
+    .badge-alert { background: var(--alert-bg); color: var(--alert-text); border: 1px solid #FECACA; }
+    .badge-warn { background: #FFF3BF; color: #854D0E; border: 1px solid #FFD43B; }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 115px 1fr 56px;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .bar-track {
+      height: 10px;
+      background: #F1F5F9;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--red-dark), var(--red));
+      border-radius: 999px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 14px;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin: 8px 0;
+    }
+
+    .chip {
+      border: 1px solid #CBD5E1;
+      background: var(--white);
+      color: var(--text);
+      padding: 4px 9px;
+      border-radius: 7px;
+      font-size: 10.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+
+    .chip:hover {
+      border-color: var(--red);
+    }
+
+    .chip.active {
+      background: var(--red);
+      color: var(--white);
+      border-color: var(--red-dark);
+    }
+
+    .dropzone {
+      border: 2px dashed var(--red);
+      background: #FFF8F8;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .banner-ok {
+      background: var(--ok-bg);
+      color: var(--ok-text);
+      border: 1px solid #BBF7D0;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .banner-warn {
+      background: #FFF8D6;
+      color: #854D0E;
+      border: 1px solid var(--yellow);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--white);
+      border: 2px solid var(--red);
+      border-radius: 11px;
+      max-width: 1140px;
+      width: 100%;
+      max-height: 88vh;
+      overflow: auto;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .modal * {
+      text-align: center;
+    }
+
+    .resumen-stack {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 640px) {
+      .mini-grid-6 {
+        grid-template-columns: repeat(3, 1fr) !important;
+      }
+      nav#main-nav {
+        gap: 4px;
+        padding: 7px 8px 9px;
+      }
+      .tab-btn {
+        padding: 6px 9px;
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="oxxo-logo-wrap" title="OXXO COLOMBIA">
+        <svg width="78" height="44" viewBox="0 0 156 88" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LOGO OXXO COLOMBIA">
+          <rect x="2" y="2" width="152" height="84" rx="10" fill="#E11922" stroke="#B81118" stroke-width="2"/>
+          <rect x="8" y="8" width="140" height="5" rx="2" fill="#FFFFFF"/>
+          <rect x="8" y="15" width="140" height="4" rx="2" fill="#FFCC00"/>
+          <text x="78" y="53" text-anchor="middle" fill="#FFFFFF" font-family="'Inter', Arial, Helvetica, sans-serif" font-weight="900" font-size="36" letter-spacing="1.5">OXXO</text>
+          <rect x="8" y="60" width="140" height="4" rx="2" fill="#FFCC00"/>
+          <rect x="8" y="66" width="140" height="3" rx="1.5" fill="#FFFFFF"/>
+          <text x="78" y="81" text-anchor="middle" fill="#FFD100" font-family="'Inter', Arial, Helvetica, sans-serif" font-weight="800" font-size="11.5" letter-spacing="2.8">COLOMBIA</text>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-sub">SIBERIA · CEDIS</div>
+        <div class="brand-title">BALANCE DE OPERACIÓN</div>
+      </div>
+    </div>
+    <div class="status-bar">
+      <span class="pill pill-warn" id="hdr-base-age">BASE SIN CARGAR</span>
+      <span class="pill" id="hdr-lines">0 LÍNEAS</span>
+      <button class="btn btn-yellow" onclick="switchTab('actualizar')">PEGAR BASE</button>
+    </div>
+  </div>
+  <nav id="main-nav" aria-label="NAVEGACIÓN DE PESTAÑAS">
+    <button class="tab-btn active" data-tab="resumen">RESUMEN</button>
+    <button class="tab-btn" data-tab="seguimiento">SEGUIMIENTO</button>
+    <button class="tab-btn" data-tab="bal-piezas">BAL. PIEZAS</button>
+    <button class="tab-btn" data-tab="bal-cajas">BAL. CAJAS</button>
+    <button class="tab-btn" data-tab="empaques">EMPAQUES</button>
+    <button class="tab-btn" data-tab="personal">PERSONAL</button>
+    <button class="tab-btn" data-tab="canastillas">CANASTILLAS</button>
+    <button class="tab-btn" data-tab="top">TOP</button>
+    <button class="tab-btn" data-tab="tiendas">TIENDAS</button>
+    <button class="tab-btn" data-tab="actualizar">ACTUALIZAR</button>
+  </nav>
+</header>
+
+<main>
+  <div id="status-banner"></div>
+  <section id="tab-resumen" class="tab-panel active"></section>
+  <section id="tab-seguimiento" class="tab-panel"></section>
+  <section id="tab-bal-piezas" class="tab-panel"></section>
+  <section id="tab-bal-cajas" class="tab-panel"></section>
+  <section id="tab-empaques" class="tab-panel"></section>
+  <section id="tab-personal" class="tab-panel"></section>
+  <section id="tab-canastillas" class="tab-panel"></section>
+  <section id="tab-top" class="tab-panel"></section>
+  <section id="tab-tiendas" class="tab-panel"></section>
+
+  <section id="tab-actualizar" class="tab-panel">
+    <div class="card">
+      <h2 class="section-title">ACTUALIZAR DATOS</h2>
+      <p class="section-sub">CARGUE LA INFORMACIÓN DESDE ARCHIVO O PEGUE LAS FILAS DIRECTAMENTE.</p>
+
+      <div class="dropzone" id="dropzone">
+        <p style="margin-bottom:10px; font-weight:700;">SUBIR BASE · ARRASTRE AQUÍ EL ARCHIVO O TOQUE PARA ELEGIRLO</p>
+        <input type="file" id="file-input" accept=".xlsx,.xls,.csv" multiple style="display:none" />
+        <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">SUBIR BASE</button>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <div style="font-weight:800; margin-bottom:6px;">PEGAR BASE</div>
+        <p class="kpi-sub" style="margin-bottom:8px;">SELECCIONE LAS FILAS DESDE SU ORIGEN DE DATOS, COPIE Y PEGUE EN EL RECUADRO.</p>
+        <textarea id="paste-base-area" rows="4" style="width:100%;" placeholder="TOQUE AQUÍ Y PEGUE (CTRL+V)"></textarea>
+        <div style="margin-top:8px; display:flex; justify-content:center; gap:8px;">
+          <button class="btn btn-primary" onclick="applyPastedBase()">CARGAR BASE PEGADA</button>
+          <button class="btn" onclick="document.getElementById('paste-base-area').value=''">LIMPIAR</button>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div style="font-weight:800; margin-bottom:8px;">DATOS EN USO</div>
+          <div id="data-info-box" style="line-height:1.9;"></div>
+        </div>
+        <div class="card">
+          <div style="font-weight:800; margin-bottom:8px;">TIEMPOS Y CAPACIDAD</div>
+          <div class="controls-inline">
+            <label class="field">CAPACIDAD / HORA
+              <input type="number" id="cfg-cap" value="5500" min="100" step="50" onchange="updateConfig()" />
+            </label>
+            <label class="field">SURTIDO -> FACTURA (MIN)
+              <input type="number" id="cfg-fac" value="120" min="0" step="5" onchange="updateConfig()" />
+            </label>
+            <label class="field">FACTURA -> DESPACHO (MIN)
+              <input type="number" id="cfg-desp" value="60" min="0" step="5" onchange="updateConfig()" />
+            </label>
+            <label class="field">HORAS DEL TURNO
+              <input type="number" id="cfg-horas" value="6.15" min="1" step="0.05" onchange="updateConfig()" />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="wave-sequence-card"></div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-backdrop" id="detail-modal" onclick="if(event.target===this) closeModal()">
+  <div class="modal" id="detail-modal-content"></div>
+</div>
+
+<script>
+const LINE_ZONES = [
+  { code: 'E4', name: 'OPT' },
+  { code: 'F1', name: 'VAPER' },
+  { code: 'E8', name: 'PAPAS' },
+  { code: 'F2', name: 'PAPAS' },
+  { code: 'F3', name: 'DULCES' },
+  { code: 'F4', name: 'ASEO' },
+  { code: 'F5', name: 'MER' },
+  { code: 'F6', name: 'GALL' },
+  { code: 'F7', name: 'RAMO' },
+  { code: 'F8', name: 'LICOR' },
+  { code: 'F9', name: 'INS' }
+];
+
+const DEFAULT_WAVE_ORDER = [15, 16, 17, 18, 19, 20, 22, 21, 23, 24, 25, 26, 27, 28, 29];
+const DEFAULT_TURNO_WAVES = [15, 16, 17, 18, 19, 20];
+
+const DEFAULT_PPP = {
+  F1: 310, E4: 219, F8: 294, F5: 274, F3: 296, F7: 808,
+  E8: 342, F2: 358, F9: 296, F6: 300, F4: 133, CA: 180
+};
+
+let state = {
+  baseRows: [],
+  pmgRows: [],
+  baseMeta: null,
+  pmgMeta: null,
+  waveOrder: [...DEFAULT_WAVE_ORDER],
+  turnoWaves: [...DEFAULT_TURNO_WAVES],
+  startTime: '2026-11-20T23:10',
+  capPerHour: 5500,
+  minToFactura: 120,
+  minToDespacho: 60,
+  shiftHours: 6.15,
+  totalPeople: 20,
+  maxPerLine: 3,
+  maxBoxes: 3,
+  minAseoOpt: 0.80,
+  pppBase: { ...DEFAULT_PPP },
+  pxtHigh: 650,
+  pxtLow: 500,
+  pctMid: 90,
+  pctLow: 80,
+  metaMin: 40000,
+  metaMax: 45000,
+  estibaAlert: 1.5,
+  topZones: ['E4 OPT','F1 VAPER','E8 PAPAS','F2 PAPAS','F3 DULCES','F4 ASEO','F5 MER','F6 GALL','F7 RAMO','F8 LICOR','F9 INS','CA CAJAS','CH HUEVOS','CV CERVEZA'],
+  topWaves: [...DEFAULT_WAVE_ORDER],
+  topSearch: '',
+  topSort: 'estibas',
+  topOnlyAlerts: false,
+  storeSearch: '',
+  dragWave: null
+};
+
+const up = s => String(s ?? '').toUpperCase();
+const fmtInt = n => Math.round(Number(n) || 0).toLocaleString('es-CO');
+const fmtDec = (n, d = 1) => (Number(n) || 0).toLocaleString('es-CO', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtPct = n => `${fmtDec(n, 1)}%`;
+const fmtNumId = n => {
+  const val = Number(n);
+  return Number.isFinite(val) && val !== 0 ? String(Math.trunc(val)) : (val === 0 ? '0' : '');
+};
+
+function toNumberFormat(v) {
+  if (typeof v === 'number') return Number.isFinite(v) ? Math.trunc(v) : 0;
+  if (v === null || v === undefined) return 0;
+  const cleaned = String(v).trim().replace(/[^0-9-]/g, '');
+  if (!cleaned || cleaned === '-') return 0;
+  const parsed = parseInt(cleaned, 10);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function formatSheetNumericColumns(ws) {
+  if (!ws || !ws['!ref']) return;
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  const headers = [];
+  for (let c = range.s.c; c <= range.e.c; c++) {
+    const cell = ws[XLSX.utils.encode_cell({ r: range.s.r, c })];
+    headers[c] = cell ? String(cell.v ?? '').trim().toUpperCase() : '';
+  }
+  const targetCols = new Set(['DISTRO_NBR', 'WAVE_NBR', 'DEST_ID']);
+  for (let c = range.s.c; c <= range.e.c; c++) {
+    if (targetCols.has(headers[c])) {
+      for (let r = range.s.r + 1; r <= range.e.r; r++) {
+        const addr = XLSX.utils.encode_cell({ r, c });
+        const cell = ws[addr];
+        if (cell && cell.v !== undefined && cell.v !== '') {
+          const numVal = toNumberFormat(cell.v);
+          cell.v = numVal;
+          cell.t = 'n';
+          cell.z = '0';
+        }
+      }
+    }
+  }
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `tab-${tabId}`));
+  renderAll();
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+function num(v) {
+  if (typeof v === 'number') return Number.isFinite(v) ? v : 0;
+  if (!v) return 0;
+  const s = String(v).trim().replace(/\s+/g, '');
+  if (/^-?\d{1,3}(\.\d{3})*(,\d+)?$/.test(s)) {
+    return parseFloat(s.replace(/\./g, '').replace(',', '.')) || 0;
+  }
+  return parseFloat(s.replace(',', '.')) || 0;
+}
+
+function normalizeBaseRow(r) {
+  return {
+    DISTRO_NBR: toNumberFormat(r.DISTRO_NBR ?? r.distro_nbr ?? ''),
+    WAVE_NBR: toNumberFormat(r.WAVE_NBR ?? r.wave_nbr ?? r.OLA ?? 0),
+    ZONE: String(r.ZONE ?? r.zone ?? r.ZONA ?? '').trim().toUpperCase(),
+    UNIT_QTY: num(r.UNIT_QTY ?? r.unit_qty),
+    INNER_PACK_QTY: num(r.INNER_PACK_QTY ?? r.inner_pack_qty),
+    UNIDADES_INNER: num(r.UNIDADES_INNER ?? r.unidades_inner),
+    ITEM_ID: String(r.ITEM_ID ?? r.item_id ?? '').trim().toUpperCase(),
+    DESCRIPTION: String(r.DESCRIPTION ?? r.description ?? '').trim().toUpperCase(),
+    STD_CASEPACK: num(r.STD_CASEPACK ?? r.std_casepack),
+    UNIDADES_CASE: num(r.UNIDADES_CASE ?? r.unidades_case),
+    DEST_ID: toNumberFormat(r.DEST_ID ?? r.dest_id ?? r.LOC ?? ''),
+    ROUTE: String(r.ROUTE ?? r.route ?? r.RUTA ?? '').trim().toUpperCase(),
+    PICK_TO_CONTAINER_ID: String(r.PICK_TO_CONTAINER_ID ?? r.pick_to_container_id ?? '').trim().toUpperCase(),
+    STORE_NAME3: String(r.STORE_NAME3 ?? r.store_name3 ?? '').trim().toUpperCase()
+  };
+}
+
+function normalizePmgRow(r) {
+  return {
+    Loc: String(toNumberFormat(r.Loc ?? r.LOC ?? r.loc ?? '') || String(r.Loc ?? r.LOC ?? r.loc ?? '').trim()).trim(),
+    Tienda: String(r.Tienda ?? r.TIENDA ?? r.tienda ?? '').trim().toUpperCase(),
+    Ruta: String(r.Ruta ?? r.RUTA ?? r.ruta ?? '').trim().toUpperCase(),
+    Piezas: num(r.Piezas ?? r.PIEZAS ?? r.piezas),
+    PMG: String(r.PMG ?? r.pmg ?? '').trim().toUpperCase(),
+    PROMESA: String(r.PROMESA ?? r.Promesa ?? r.promesa ?? '').trim().toUpperCase(),
+    PMO: String(r.PMO ?? r.Pmo ?? r.pmo ?? '').trim().toUpperCase(),
+    Zona: String(r.Zona ?? r.ZONA ?? r.zona ?? '').trim().toUpperCase()
+  };
+}
+
+function ingestWorkbook(wb, fileName) {
+  const names = wb.SheetNames || [];
+  let loadedBase = false, loadedPmg = false;
+  const nowStr = up(new Date().toLocaleString('es-CO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }));
+  const cleanFile = up(fileName);
+
+  for (const sName of names) {
+    const low = sName.toLowerCase();
+    const ws = wb.Sheets[sName];
+    const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+    if (!rows.length) continue;
+    const cols = Object.keys(rows[0]).map(c => c.toUpperCase());
+    if (low.includes('resultado') || low.includes('base') || cols.includes('WAVE_NBR')) {
+      formatSheetNumericColumns(ws);
+      const formattedRows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      state.baseRows = formattedRows.map(normalizeBaseRow).filter(r => r.WAVE_NBR > 0 && r.ZONE);
+      state.baseMeta = { name: cleanFile, updatedAt: nowStr, lines: state.baseRows.length };
+      const waves = [...new Set(state.baseRows.map(r => r.WAVE_NBR))];
+      const ordered = DEFAULT_WAVE_ORDER.filter(w => waves.includes(w));
+      const extra = waves.filter(w => !ordered.includes(w)).sort((a,b) => a - b);
+      state.waveOrder = [...ordered, ...extra];
+      state.topWaves = [...state.waveOrder];
+      loadedBase = true;
+    }
+    if (low.includes('pmg') || low.includes('hoja1') || cols.includes('LOC')) {
+      state.pmgRows = rows.map(normalizePmgRow).filter(r => r.Loc);
+      state.pmgMeta = { name: cleanFile, updatedAt: nowStr, stores: state.pmgRows.length };
+      loadedPmg = true;
+    }
+  }
+  return { loadedBase, loadedPmg };
+}
+
+function handleFiles(files) {
+  if (!files || !files.length) return;
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type: 'array' });
+      const res = ingestWorkbook(wb, file.name);
+      if (!res.loadedBase && !res.loadedPmg) {
+        const ws0 = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws0, { defval: '' });
+        if (rows.length && ('WAVE_NBR' in rows[0] || 'wave_nbr' in rows[0])) {
+          formatSheetNumericColumns(ws0);
+          const formattedRows = XLSX.utils.sheet_to_json(ws0, { defval: '' });
+          state.baseRows = formattedRows.map(normalizeBaseRow).filter(r => r.WAVE_NBR > 0 && r.ZONE);
+          state.baseMeta = { name: up(file.name), updatedAt: up(new Date().toLocaleString('es-CO')), lines: state.baseRows.length };
+          const waves = [...new Set(state.baseRows.map(r => r.WAVE_NBR))];
+          const ordered = DEFAULT_WAVE_ORDER.filter(w => waves.includes(w));
+          const extra = waves.filter(w => !ordered.includes(w)).sort((a,b) => a - b);
+          state.waveOrder = [...ordered, ...extra];
+          state.topWaves = [...state.waveOrder];
+        } else if (rows.length && ('Loc' in rows[0] || 'LOC' in rows[0])) {
+          state.pmgRows = rows.map(normalizePmgRow).filter(r => r.Loc);
+          state.pmgMeta = { name: up(file.name), updatedAt: up(new Date().toLocaleString('es-CO')), stores: state.pmgRows.length };
+        }
+      }
+      renderAll();
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function applyPastedBase() {
+  const txt = document.getElementById('paste-base-area').value.trim();
+  if (!txt) return;
+  const lines = txt.split(/\r?\n/).filter(l => l.trim());
+  const firstCols = lines[0].split(/\t|;/);
+  const hasHeader = firstCols.some(c => /WAVE_NBR|ZONE|UNIDADES_INNER|DEST_ID/i.test(c));
+  let parsedRows = [];
+
+  if (hasHeader) {
+    const wb = XLSX.read(txt, { type: 'string' });
+    const ws0 = wb.Sheets[wb.SheetNames[0]];
+    formatSheetNumericColumns(ws0);
+    parsedRows = XLSX.utils.sheet_to_json(ws0, { defval: '' }).map(normalizeBaseRow);
+  } else {
+    parsedRows = lines.map(line => {
+      const c = line.split(/\t|;/);
+      return normalizeBaseRow({
+        DISTRO_NBR: c[0], WAVE_NBR: c[1], ZONE: c[2], UNIT_QTY: c[3],
+        INNER_PACK_QTY: c[4], UNIDADES_INNER: c[5], ITEM_ID: c[6], DESCRIPTION: c[7],
+        STD_CASEPACK: c[8], UNIDADES_CASE: c[9], DEST_ID: c[10], ROUTE: c[11],
+        PICK_TO_CONTAINER_ID: c[12], STORE_NAME3: c[13]
+      });
+    });
+  }
+
+  state.baseRows = parsedRows.filter(r => r.WAVE_NBR > 0 && r.ZONE);
+  const nowStr = up(new Date().toLocaleString('es-CO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }));
+  state.baseMeta = { name: 'PEGADO MANUAL', updatedAt: nowStr, lines: state.baseRows.length };
+  const waves = [...new Set(state.baseRows.map(r => r.WAVE_NBR))];
+  if (waves.length) {
+    const ordered = DEFAULT_WAVE_ORDER.filter(w => waves.includes(w));
+    const extra = waves.filter(w => !ordered.includes(w)).sort((a,b) => a - b);
+    state.waveOrder = [...ordered, ...extra];
+    state.topWaves = [...state.waveOrder];
+  }
+  renderAll();
+}
+
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.background = '#FEF2F2'; });
+dz.addEventListener('dragleave', () => { dz.style.background = '#FFF8F8'; });
+dz.addEventListener('drop', e => { e.preventDefault(); dz.style.background = '#FFF8F8'; handleFiles(e.dataTransfer.files); });
+document.getElementById('file-input').addEventListener('change', e => handleFiles(e.target.files));
+
+function updateConfig() {
+  state.capPerHour = Math.max(100, num(document.getElementById('cfg-cap')?.value ?? state.capPerHour));
+  state.minToFactura = Math.max(0, num(document.getElementById('cfg-fac')?.value ?? state.minToFactura));
+  state.minToDespacho = Math.max(0, num(document.getElementById('cfg-desp')?.value ?? state.minToDespacho));
+  state.shiftHours = Math.max(0.5, num(document.getElementById('cfg-horas')?.value ?? state.shiftHours));
+  const dtInput = document.getElementById('cfg-start-dt');
+  if (dtInput && dtInput.value) state.startTime = dtInput.value;
+  renderAll();
+}
+
+function toggleTurnoWave(w) {
+  if (state.turnoWaves.includes(w)) {
+    state.turnoWaves = state.turnoWaves.filter(x => x !== w);
+  } else {
+    state.turnoWaves.push(w);
+  }
+  renderAll();
+}
+
+function useTurnoSet(wavesArr) {
+  state.turnoWaves = [...wavesArr];
+  renderAll();
+}
+
+function moveWave(waveNum, dir) {
+  const idx = state.waveOrder.indexOf(waveNum);
+  const target = idx + dir;
+  if (idx < 0 || target < 0 || target >= state.waveOrder.length) return;
+  const arr = [...state.waveOrder];
+  const [moved] = arr.splice(idx, 1);
+  arr.splice(target, 0, moved);
+  state.waveOrder = arr;
+  renderAll();
+}
+
+function onDragStartWave(e, waveNum) {
+  state.dragWave = waveNum;
+  e.currentTarget.classList.add('dragging');
+}
+
+function onDragEndWave(e) {
+  e.currentTarget.classList.remove('dragging');
+  state.dragWave = null;
+}
+
+function onDropWave(e, targetWave) {
+  e.preventDefault();
+  if (state.dragWave === null || state.dragWave === targetWave) return;
+  const arr = [...state.waveOrder];
+  const from = arr.indexOf(state.dragWave);
+  const to = arr.indexOf(targetWave);
+  if (from < 0 || to < 0) return;
+  const [moved] = arr.splice(from, 1);
+  arr.splice(to, 0, moved);
+  state.waveOrder = arr;
+  renderAll();
+}
+
+function resetWaveOrder() {
+  const waves = [...new Set(state.baseRows.map(r => r.WAVE_NBR))];
+  if (waves.length) {
+    const ordered = DEFAULT_WAVE_ORDER.filter(w => waves.includes(w));
+    const extra = waves.filter(w => !ordered.includes(w)).sort((a,b) => a - b);
+    state.waveOrder = [...ordered, ...extra];
+  } else {
+    state.waveOrder = [...DEFAULT_WAVE_ORDER];
+  }
+  state.turnoWaves = [...DEFAULT_TURNO_WAVES];
+  renderAll();
+}
+
+function computeModel() {
+  const pmgMap = new Map();
+  state.pmgRows.forEach(p => pmgMap.set(String(p.Loc).trim(), p));
+
+  const lineCodes = LINE_ZONES.map(z => z.code);
+  const byWave = new Map();
+  const allStores = new Set();
+  const itemMap = new Map();
+  const topSelectedWaves = new Set(state.topWaves);
+  const topItemMap = new Map();
+
+  for (const r of state.baseRows) {
+    const destStr = fmtNumId(r.DEST_ID);
+    if (destStr) allStores.add(destStr);
+    if (!byWave.has(r.WAVE_NBR)) {
+      const zMap = {};
+      [...lineCodes, 'CA', 'CH', 'CV'].forEach(c => { zMap[c] = { pieces: 0, containers: new Set(), stores: new Set() }; });
+      byWave.set(r.WAVE_NBR, {
+        wave: r.WAVE_NBR,
+        routes: new Map(),
+        stores: new Set(),
+        zones: zMap
+      });
+    }
+    const wObj = byWave.get(r.WAVE_NBR);
+    if (destStr) wObj.stores.add(destStr);
+    if (r.ROUTE) wObj.routes.set(r.ROUTE, (wObj.routes.get(r.ROUTE) || 0) + 1);
+
+    const zEntry = wObj.zones[r.ZONE];
+    if (zEntry) {
+      if (lineCodes.includes(r.ZONE)) {
+        zEntry.pieces += r.UNIDADES_INNER;
+      } else {
+        zEntry.pieces += r.UNIDADES_CASE;
+      }
+      if (r.PICK_TO_CONTAINER_ID) zEntry.containers.add(r.PICK_TO_CONTAINER_ID);
+      if (destStr) zEntry.stores.add(destStr);
+    }
+
+    if (r.ITEM_ID || r.DESCRIPTION) {
+      const key = `${r.ITEM_ID}__${r.DESCRIPTION}`;
+      if (!itemMap.has(key)) {
+        itemMap.set(key, {
+          itemId: r.ITEM_ID,
+          desc: r.DESCRIPTION,
+          zone: r.ZONE,
+          stdCasepack: r.STD_CASEPACK,
+          pieces: 0,
+          boxes: 0,
+          stores: new Set(),
+          waves: new Set()
+        });
+      }
+      const it = itemMap.get(key);
+      if (r.ZONE === 'CA' || r.ZONE === 'CV' || r.ZONE === 'CH') {
+        it.boxes += r.UNIDADES_CASE;
+        it.pieces += r.UNIT_QTY;
+      } else {
+        it.pieces += r.UNIDADES_INNER;
+        if (r.STD_CASEPACK > 0) it.boxes += r.UNIDADES_INNER / r.STD_CASEPACK;
+      }
+      if (destStr) it.stores.add(destStr);
+      if (r.WAVE_NBR) it.waves.add(r.WAVE_NBR);
+
+      if (topSelectedWaves.has(r.WAVE_NBR)) {
+        if (!topItemMap.has(key)) {
+          topItemMap.set(key, {
+            itemId: r.ITEM_ID,
+            desc: r.DESCRIPTION,
+            zone: r.ZONE,
+            stdCasepack: r.STD_CASEPACK,
+            pieces: 0,
+            boxes: 0,
+            stores: new Set(),
+            waves: new Set()
+          });
+        }
+        const tit = topItemMap.get(key);
+        if (r.ZONE === 'CA' || r.ZONE === 'CV' || r.ZONE === 'CH') {
+          tit.boxes += r.UNIDADES_CASE;
+          tit.pieces += r.UNIT_QTY;
+        } else {
+          tit.pieces += r.UNIDADES_INNER;
+          if (r.STD_CASEPACK > 0) tit.boxes += r.UNIDADES_INNER / r.STD_CASEPACK;
+        }
+        if (destStr) tit.stores.add(destStr);
+        if (r.WAVE_NBR) tit.waves.add(r.WAVE_NBR);
+      }
+    }
+  }
+
+  let cursorMs = new Date(state.startTime).getTime();
+  if (!Number.isFinite(cursorMs)) cursorMs = Date.now();
+  const startMs = cursorMs;
+
+  const waveRows = [];
+  for (const w of state.waveOrder) {
+    const raw = byWave.get(w) || {
+      wave: w, routes: new Map(), stores: new Set(),
+      zones: Object.fromEntries([...lineCodes, 'CA', 'CH', 'CV'].map(c => [c, { pieces: 0, containers: new Set(), stores: new Set() }]))
+    };
+    let mainRoute = '';
+    let maxR = -1;
+    for (const [rt, cnt] of raw.routes.entries()) {
+      if (cnt > maxR) { maxR = cnt; mainRoute = rt; }
+    }
+    const pmgSample = [...raw.stores].map(s => pmgMap.get(s)).find(Boolean);
+    const linePieces = lineCodes.reduce((acc, c) => acc + (raw.zones[c]?.pieces || 0), 0);
+    const cajas = raw.zones.CA?.pieces || 0;
+    const huevos = raw.zones.CH?.pieces || 0;
+    const cerveza = raw.zones.CV?.pieces || 0;
+    const totalPieces = linePieces + cajas + huevos + cerveza;
+    const hoursSurtido = totalPieces / Math.max(1, state.capPerHour);
+    const surtidoMs = cursorMs + hoursSurtido * 3600000;
+    const facturaMs = surtidoMs + state.minToFactura * 60000;
+    const despachoMs = facturaMs + state.minToDespacho * 60000;
+    cursorMs = surtidoMs;
+
+    waveRows.push({
+      wave: w,
+      route: up(mainRoute || pmgSample?.Ruta || ''),
+      storesCount: raw.stores.size,
+      storesSet: raw.stores,
+      promesa: up(pmgSample?.PROMESA || ''),
+      pmo: up(pmgSample?.PMO || ''),
+      zona: up(pmgSample?.Zona || ''),
+      linePieces, cajas, huevos, cerveza, totalPieces,
+      hoursSurtido, surtidoMs, facturaMs, despachoMs,
+      inTurno: state.turnoWaves.includes(w),
+      zones: raw.zones
+    });
+  }
+
+  const totalLinePieces = waveRows.reduce((a, r) => a + r.linePieces, 0);
+  const totalCajas = waveRows.reduce((a, r) => a + r.cajas, 0);
+  const totalHuevos = waveRows.reduce((a, r) => a + r.huevos, 0);
+  const totalCerveza = waveRows.reduce((a, r) => a + r.cerveza, 0);
+  const totalPieces = waveRows.reduce((a, r) => a + r.totalPieces, 0);
+  const totalStores = allStores.size;
+  const totalHours = totalPieces / Math.max(1, state.capPerHour);
+
+  const turnoRows = waveRows.filter(r => r.inTurno);
+  const turnoLinePieces = turnoRows.reduce((a, r) => a + r.linePieces, 0);
+  const turnoCajas = turnoRows.reduce((a, r) => a + r.cajas, 0);
+  const turnoHuevos = turnoRows.reduce((a, r) => a + r.huevos, 0);
+  const turnoCerveza = turnoRows.reduce((a, r) => a + r.cerveza, 0);
+  const turnoPiecesNoEggs = turnoLinePieces + turnoCajas + turnoCerveza;
+  const turnoStores = new Set();
+  byWave.forEach((v, k) => { if (state.turnoWaves.includes(k)) v.stores.forEach(s => turnoStores.add(s)); });
+
+  const storeAgg = new Map();
+  for (const r of state.baseRows) {
+    const destStr = fmtNumId(r.DEST_ID);
+    if (!destStr) continue;
+    if (!storeAgg.has(destStr)) {
+      storeAgg.set(destStr, { loc: destStr, name3: r.STORE_NAME3, routes: new Set(), waves: new Set(), linePieces: 0, cajas: 0, huevos: 0, containers: new Set() });
+    }
+    const st = storeAgg.get(destStr);
+    if (r.ROUTE) st.routes.add(r.ROUTE);
+    if (r.WAVE_NBR) st.waves.add(r.WAVE_NBR);
+    if (lineCodes.includes(r.ZONE)) st.linePieces += r.UNIDADES_INNER;
+    if (r.ZONE === 'CA') st.cajas += r.UNIDADES_CASE;
+    if (r.ZONE === 'CH') st.huevos += r.UNIDADES_CASE;
+    if (r.PICK_TO_CONTAINER_ID) st.containers.add(r.PICK_TO_CONTAINER_ID);
+  }
+  const storesList = [...storeAgg.values()].map(s => {
+    const pmg = pmgMap.get(s.loc);
+    return {
+      loc: s.loc,
+      tienda: pmg ? up(pmg.Tienda) : 'NO ESTÁ EN PMG',
+      inPmg: Boolean(pmg),
+      ruta: up([...s.routes][0] || pmg?.Ruta || ''),
+      olas: s.waves.size,
+      piezas: s.linePieces + s.cajas + s.huevos,
+      cajas: s.cajas,
+      huevos: s.huevos,
+      cn: s.containers.size,
+      pmg: up(pmg?.PMG || ''),
+      promesa: up(pmg?.PROMESA || ''),
+      pmo: up(pmg?.PMO || ''),
+      zona: up(pmg?.Zona || '')
+    };
+  }).sort((a, b) => b.piezas - a.piezas);
+
+  return {
+    waveRows, turnoRows, totalLinePieces, totalCajas, totalHuevos, totalCerveza, totalPieces,
+    totalStores, totalHours, startMs, endMs: cursorMs,
+    turnoLinePieces, turnoCajas, turnoHuevos, turnoCerveza, turnoPiecesNoEggs,
+    turnoStoresCount: turnoStores.size,
+    storesList, itemsList: [...itemMap.values()], topItemsList: [...topItemMap.values()]
+  };
+}
+
+function calcPersonnel(m) {
+  const pxtTurno = m.turnoStoresCount ? m.turnoPiecesNoEggs / m.turnoStoresCount : 0;
+  const factor = pxtTurno >= state.pxtHigh ? 1 : (pxtTurno >= state.pxtLow ? state.pctMid / 100 : state.pctLow / 100);
+
+  const lines = [
+    { code: 'F1', name: 'VAPER F1', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.F1?.pieces || 0), 0) },
+    { code: 'E4', name: 'OPT E4', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.E4?.pieces || 0), 0) },
+    { code: 'F8', name: 'LICOR F8', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.F8?.pieces || 0), 0) },
+    { code: 'F5', name: 'MER F5', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.F5?.pieces || 0), 0) },
+    { code: 'F3', name: 'DULCES F3', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.F3?.pieces || 0), 0) },
+    { code: 'F7', name: 'RAMO F7', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.F7?.pieces || 0), 0) },
+    { code: 'E8', name: 'PAPAS E8', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.E8?.pieces || 0), 0) },
+    { code: 'F2', name: 'PAPAS F2', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.F2?.pieces || 0), 0) },
+    { code: 'F9', name: 'INS F9', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.F9?.pieces || 0), 0) },
+    { code: 'F6', name: 'GALL F6', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.F6?.pieces || 0), 0) },
+    { code: 'F4', name: 'ASEO F4', pieces: m.turnoRows.reduce((a,r) => a + (r.zones.F4?.pieces || 0), 0) },
+    { code: 'CA', name: 'CA · CV (CAJAS) CC', pieces: m.turnoCajas + m.turnoCerveza }
+  ];
+
+  const threshold = Number.isFinite(state.minAseoOpt) ? state.minAseoOpt : 0.80;
+
+  const calc = lines.map(l => {
+    const pppBase = state.pppBase[l.code] || 250;
+    const pppAdj = Math.round(pppBase * factor);
+    const req = l.pieces / Math.max(1, pppAdj * state.shiftHours);
+    const isAseoOrOpt = l.code === 'E4' || l.code === 'F4';
+    const belowThreshold = isAseoOrOpt && req < threshold;
+    return { ...l, pppBase, pppAdj, req, assigned: 0, isAseoOrOpt, belowThreshold };
+  });
+
+  let pool = state.totalPeople;
+  calc.forEach(item => {
+    if (item.belowThreshold) {
+      item.assigned = 0;
+    } else {
+      const cap = item.code === 'CA' ? state.maxBoxes : state.maxPerLine;
+      const minPerson = item.isAseoOrOpt ? (item.req >= threshold ? 1 : 0) : (item.pieces > 0 ? 1 : 0);
+      const take = Math.min(cap, Math.max(minPerson, Math.round(item.req)));
+      item.assigned = Math.min(take, pool);
+      pool -= item.assigned;
+    }
+  });
+  while (pool > 0) {
+    const candidate = calc.filter(x => !x.belowThreshold && x.assigned < (x.code === 'CA' ? state.maxBoxes : state.maxPerLine) && x.pieces > 0)
+      .sort((a,b) => (b.pieces / Math.max(1, b.assigned * b.pppAdj)) - (a.pieces / Math.max(1, a.assigned * a.pppAdj)))[0];
+    if (!candidate) break;
+    candidate.assigned += 1;
+    pool -= 1;
+  }
+
+  return { pxtTurno, factor, calc };
+}
+
+function formatDurationHM(hours) {
+  const totalMin = Math.round(hours * 60);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return `${h}:${String(m).padStart(2, '0')}`;
+}
+
+function formatClockPlus(ms, baseMs) {
+  const d = new Date(ms);
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  const dayDiff = Math.floor((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(new Date(baseMs).getFullYear(), new Date(baseMs).getMonth(), new Date(baseMs).getDate())) / 86400000);
+  return `${hh}:${mm}${dayDiff > 0 ? ` +${dayDiff}D` : ''}`;
+}
+
+function openBalanceDetail(mode, waveNum = null) {
+  const lineCodes = new Set(LINE_ZONES.map(z => z.code));
+  const boxCodes = new Set(['CA', 'CH', 'CV']);
+  const isBoxes = mode === 'cajas';
+  const allowedZones = isBoxes ? boxCodes : lineCodes;
+
+  const filtered = state.baseRows.filter(r => {
+    const zoneMatch = allowedZones.has(r.ZONE);
+    const waveMatch = waveNum === null || waveNum === undefined ? true : r.WAVE_NBR === waveNum;
+    return zoneMatch && waveMatch;
+  });
+
+  const groupedMap = new Map();
+  const zoneMissingTotals = new Map();
+
+  for (const r of filtered) {
+    const qty = isBoxes ? num(r.UNIDADES_CASE) : (r.UNIDADES_INNER || num(r.UNIT_QTY));
+    if (!qty) continue;
+    const distro = fmtNumId(r.DISTRO_NBR);
+    const storeName = up(r.STORE_NAME3 || '');
+    const zone = up(r.ZONE || '');
+    const itemId = up(r.ITEM_ID || '');
+    const desc = up(r.DESCRIPTION || '');
+    const containerId = up(r.PICK_TO_CONTAINER_ID || '');
+
+    zoneMissingTotals.set(zone, (zoneMissingTotals.get(zone) || 0) + qty);
+
+    const key = `${distro}||${storeName}||${zone}||${itemId}||${desc}||${containerId}`;
+    if (!groupedMap.has(key)) {
+      groupedMap.set(key, {
+        distro,
+        storeName,
+        zone,
+        itemId,
+        desc,
+        containerId,
+        faltantes: 0
+      });
+    }
+    groupedMap.get(key).faltantes += qty;
+  }
+
+  const detailRows = [...groupedMap.values()].sort((a, b) => {
+    const dComp = Number(a.distro) - Number(b.distro);
+    if (dComp !== 0) return dComp;
+    return String(a.storeName).localeCompare(String(b.storeName), 'es');
+  });
+
+  const totalFaltantes = detailRows.reduce((acc, item) => acc + item.faltantes, 0);
+  const zoneSummaryArr = [...zoneMissingTotals.entries()].sort((a, b) => b[1] - a[1]);
+
+  const titleLabel = isBoxes
+    ? `DETALLE DE CAJAS${waveNum ? ` · OLA ${waveNum}` : ' · TOTAL'}`
+    : `DETALLE DE PIEZAS${waveNum ? ` · OLA ${waveNum}` : ' · TOTAL'}`;
+
+  const html = `
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px;">
+      <h3>${titleLabel} (${FMT_INT_SAFE(detailRows.length)} REGISTROS)</h3>
+      <button class="btn" onclick="closeModal()">CERRAR</button>
+    </div>
+
+    <div class="card" style="padding:10px; margin-bottom:12px;">
+      <div class="kpi-label" style="margin-bottom:6px;">PRODUCTOS / UNIDADES FALTANTES POR ZONA (${isBoxes ? 'CAJAS/BULTOS' : 'PIEZAS'})</div>
+      <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px;">
+        ${zoneSummaryArr.length ? zoneSummaryArr.map(([z, q]) => `
+          <span class="badge badge-warn">ZONA ${z}: ${fmtInt(q)}</span>
+        `).join('') : '<span class="kpi-sub">SIN DATOS PARA MOSTRAR</span>'}
+        <span class="badge badge-alert">TOTAL GENERAL: ${fmtInt(totalFaltantes)}</span>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>DISTRO_NBR</th>
+            <th>STORE_NAME3</th>
+            <th>ZONE</th>
+            <th>ITEM_ID</th>
+            <th>DESCRIPTION</th>
+            <th>PICK_TO_CONTAINER_ID</th>
+            <th>FALTAN POR ZONA</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${detailRows.length ? detailRows.map(d => `
+            <tr>
+              <td><strong>${d.distro}</strong></td>
+              <td>${d.storeName || '–'}</td>
+              <td><strong>${d.zone}</strong></td>
+              <td>${d.itemId || '–'}</td>
+              <td>${d.desc || '–'}</td>
+              <td>${d.containerId || '–'}</td>
+              <td><strong>${fmtInt(d.faltantes)}</strong></td>
+            </tr>
+          `).join('') : `
+            <tr><td colspan="7">NO HAY REGISTROS DISPONIBLES.</td></tr>
+          `}
+          ${detailRows.length ? `
+            <tr class="total-row">
+              <td colspan="6">TOTAL</td>
+              <td>${fmtInt(totalFaltantes)}</td>
+            </tr>
+          ` : ''}
+        </tbody>
+      </table>
+    </div>`;
+
+  document.getElementById('detail-modal-content').innerHTML = html;
+  document.getElementById('detail-modal').classList.add('open');
+  autoAdjustTables();
+}
+
+function FMT_INT_SAFE(n) {
+  return fmtInt(n);
+}
+
+function closeModal() { document.getElementById('detail-modal').classList.remove('open'); }
+
+function autoAdjustTables() {
+  const wraps = document.querySelectorAll('.table-wrap');
+  wraps.forEach(wrap => {
+    const tbl = wrap.querySelector('table');
+    if (!tbl) return;
+    const cells = tbl.querySelectorAll('th, td');
+    const colCount = tbl.rows[0]?.cells.length || 1;
+    let fontSize = 12;
+    let padY = 6;
+    let padX = 6;
+
+    if (colCount >= 14) {
+      fontSize = 10.5;
+      padY = 5;
+      padX = 3;
+    } else if (colCount >= 10) {
+      fontSize = 11;
+      padY = 5;
+      padX = 4;
+    }
+
+    cells.forEach(c => {
+      c.style.fontSize = `${fontSize}px`;
+      c.style.padding = `${padY}px ${padX}px`;
+    });
+
+    const parentWidth = wrap.parentElement ? wrap.parentElement.clientWidth - 28 : window.innerWidth - 40;
+    let tblWidth = tbl.scrollWidth;
+    let guard = 0;
+    while (tblWidth > parentWidth && fontSize > 8.5 && guard < 12) {
+      fontSize -= 0.5;
+      padX = Math.max(2, padX - 0.5);
+      cells.forEach(c => {
+        c.style.fontSize = `${fontSize}px`;
+        c.style.padding = `${padY}px ${padX}px`;
+      });
+      tblWidth = tbl.scrollWidth;
+      guard++;
+    }
+
+    if (tbl.scrollWidth > parentWidth + 2) {
+      wrap.classList.add('force-scroll');
+    } else {
+      wrap.classList.remove('force-scroll');
+    }
+  });
+}
+
+window.addEventListener('resize', () => autoAdjustTables());
+
+function renderAll() {
+  const m = computeModel();
+  document.getElementById('hdr-lines').textContent = `${fmtInt(state.baseRows.length)} LÍNEAS`;
+  document.getElementById('hdr-base-age').textContent = state.baseMeta ? `BASE · ${state.baseMeta.updatedAt}` : 'BASE SIN CARGAR';
+
+  const banner = document.getElementById('status-banner');
+  if (!state.baseRows.length) {
+    banner.innerHTML = `<div class="banner-warn">AÚN NO SE HA CARGADO LA BASE. VE A LA PESTAÑA <strong>ACTUALIZAR</strong> PARA SUBIRLA O PEGARLA.</div>`;
+  } else {
+    banner.innerHTML = `<div class="banner-ok">LISTO: BASE CON ${fmtInt(state.baseRows.length)} LÍNEAS · PMG CON ${fmtInt(state.pmgRows.length)} TIENDAS.</div>`;
+  }
+
+  renderResumen(m);
+  renderSeguimiento(m);
+  renderBalPiezas(m);
+  renderBalCajas(m);
+  renderEmpaques(m);
+  renderPersonal(m);
+  renderCanastillas(m);
+  renderTop(m);
+  renderTiendas(m);
+  renderActualizar(m);
+  autoAdjustTables();
+}
+
+function renderResumen(m) {
+  const pxt = m.totalStores ? m.totalPieces / m.totalStores : 0;
+  const bxt = m.totalStores ? (m.totalCajas + m.totalHuevos + m.totalCerveza) / m.totalStores : 0;
+  const pctLine = m.totalPieces ? (m.totalLinePieces / m.totalPieces) * 100 : 0;
+  const pctBox = m.totalPieces ? (m.totalCajas / m.totalPieces) * 100 : 0;
+  const pctEgg = m.totalPieces ? (m.totalHuevos / m.totalPieces) * 100 : 0;
+  const activeWave = m.turnoRows[0]?.wave ?? state.waveOrder[0] ?? '-';
+  const activeRoute = m.turnoRows[0]?.route ?? '';
+  const upcoming = m.waveRows.slice(0, 5);
+  const lastWave = m.waveRows[m.waveRows.length - 1];
+
+  const lineZoneCodes = new Set(LINE_ZONES.map(z => z.code));
+  const boxZoneCodes = new Set(['CA', 'CH', 'CV']);
+
+  const mapEstibaItem = it => {
+    const cajasEst = it.boxes > 0 ? it.boxes : (it.stdCasepack > 0 ? it.pieces / it.stdCasepack : 0);
+    return { desc: it.desc, zone: it.zone, estibas: cajasEst / 40 };
+  };
+
+  const estibaAlertsLineas = m.itemsList
+    .filter(it => lineZoneCodes.has(it.zone))
+    .map(mapEstibaItem)
+    .filter(x => x.estibas >= state.estibaAlert)
+    .sort((a, b) => b.estibas - a.estibas);
+
+  const estibaAlertsCajas = m.itemsList
+    .filter(it => boxZoneCodes.has(it.zone))
+    .map(mapEstibaItem)
+    .filter(x => x.estibas >= state.estibaAlert)
+    .sort((a, b) => b.estibas - a.estibas);
+
+  const { pxtTurno, calc } = calcPersonnel(m);
+  const activePersonnel = calc.filter(c => c.assigned > 0).sort((a, b) => (b.pieces / (b.assigned * b.pppAdj)) - (a.pieces / (a.assigned * a.pppAdj)));
+  const turnoLineTotals = LINE_ZONES.map(z => ({
+    ...z,
+    pieces: m.turnoRows.reduce((a, r) => a + (r.zones[z.code]?.pieces || 0), 0)
+  })).sort((a, b) => b.pieces - a.pieces);
+  const maxTurnoLine = Math.max(1, turnoLineTotals[0]?.pieces || 1);
+
+  const dateObj = new Date(m.startMs);
+  const dateLabel = up(dateObj.toLocaleDateString('es-CO', { weekday: 'long', day: '2-digit', month: 'short' }));
+
+  document.getElementById('tab-resumen').innerHTML = `
+    <div class="resumen-stack">
+      <div class="card">
+        <div style="display:flex; justify-content:space-around; text-align:center; margin-bottom:14px;">
+          <div>
+            <div class="kpi-label">${dateLabel}</div>
+            <div class="kpi-val" style="font-size:26px;">${up(dateObj.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'}))}</div>
+          </div>
+          <div>
+            <div class="kpi-label">OLA ACTUAL</div>
+            <div class="kpi-val" style="font-size:26px;">${activeWave}</div>
+            <div class="kpi-sub">${activeRoute}</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); text-align:center; gap:8px;">
+          <div><div class="kpi-label">SURTIDO RESTANTE</div><div class="kpi-val" style="font-size:16px;">${formatDurationHM(m.totalHours)} H</div></div>
+          <div><div class="kpi-label">FIN DE SURTIDO</div><div class="kpi-val" style="font-size:16px;">${formatClockPlus(m.endMs, m.startMs)}</div></div>
+          <div><div class="kpi-label">OLAS</div><div class="kpi-val" style="font-size:16px;">${m.waveRows.length}</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; text-align:center; margin-bottom:14px;">
+          <div><div class="kpi-label">TOTAL PIEZAS</div><div class="kpi-val" style="font-size:26px;">${fmtInt(m.totalPieces)}</div></div>
+          <div>
+            <div class="kpi-label">TURNO · SIN HUEVOS</div>
+            <div class="kpi-val red" style="font-size:26px;">${fmtInt(m.turnoPiecesNoEggs)}</div>
+            <div class="kpi-sub">META ${fmtInt(state.metaMin/1000)} A ${fmtInt(state.metaMax/1000)} MIL</div>
+          </div>
+        </div>
+        <div class="mini-grid-6" style="display:grid; grid-template-columns:repeat(6,1fr); gap:8px; text-align:center;">
+          <div><div class="kpi-label">TIENDAS</div><div class="kpi-val" style="font-size:15px;">${fmtInt(m.totalStores)}</div></div>
+          <div><div class="kpi-label">PXT</div><div class="kpi-val" style="font-size:15px;">${fmtDec(pxt,1)}</div></div>
+          <div><div class="kpi-label">BXT</div><div class="kpi-val" style="font-size:15px;">${fmtDec(bxt,1)}</div></div>
+          <div><div class="kpi-label">LÍNEAS</div><div class="kpi-val" style="font-size:15px;">${fmtPct(pctLine)}</div></div>
+          <div><div class="kpi-label">CAJAS</div><div class="kpi-val" style="font-size:15px;">${fmtPct(pctBox)}</div></div>
+          <div><div class="kpi-label">HUEVOS</div><div class="kpi-val" style="font-size:15px;">${fmtPct(pctEgg)}</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; padding:0 16px 6px;">
+          <span class="kpi-label">PRÓXIMAS OLAS</span>
+          <span class="kpi-sub">HORA DE DESPACHO</span>
+        </div>
+        <table>
+          <tbody>
+            ${upcoming.map(w => `
+              <tr>
+                <td><strong>${w.wave}</strong> - ${w.route} <span class="kpi-sub">${fmtInt(w.totalPieces)} PZ</span></td>
+                <td><strong>${formatClockPlus(w.despachoMs, m.startMs)}</strong></td>
+              </tr>
+            `).join('')}
+            ${lastWave ? `
+              <tr>
+                <td class="kpi-label">ÚLTIMO DESPACHO</td>
+                <td><strong>${formatClockPlus(lastWave.despachoMs, m.startMs)}</strong></td>
+              </tr>
+            ` : ''}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span class="kpi-label">TOP DE LÍNEAS · MÁS DE ${fmtDec(state.estibaAlert,1)} ESTIBAS</span>
+          <a href="#" onclick="switchTab('top');return false;" style="font-size:11px; color:var(--red); font-weight:800;">VER TOP</a>
+        </div>
+        ${estibaAlertsLineas.length ? `
+          <table>
+            <thead>
+              <tr>
+                <th>ZONA</th>
+                <th>ARTÍCULO</th>
+                <th>ESTIBAS</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${estibaAlertsLineas.slice(0, 5).map(a => `
+                <tr>
+                  <td><strong>${a.zone}</strong></td>
+                  <td>${a.desc}</td>
+                  <td><span class="badge badge-alert">${fmtDec(a.estibas, 2)}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          ${estibaAlertsLineas.length > 5 ? `<div class="kpi-sub" style="text-align:center; margin-top:6px;">Y ${estibaAlertsLineas.length - 5} MÁS EN LÍNEAS</div>` : ''}
+        ` : `<div class="kpi-sub" style="text-align:center;">SIN ALERTAS EN LÍNEAS POR ENCIMA DE ${fmtDec(state.estibaAlert,1)} ESTIBAS.</div>`}
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span class="kpi-label">TOP DE CAJAS · MÁS DE ${fmtDec(state.estibaAlert,1)} ESTIBAS</span>
+          <a href="#" onclick="switchTab('top');return false;" style="font-size:11px; color:var(--red); font-weight:800;">VER TOP</a>
+        </div>
+        ${estibaAlertsCajas.length ? `
+          <table>
+            <thead>
+              <tr>
+                <th>ZONA</th>
+                <th>ARTÍCULO</th>
+                <th>ESTIBAS</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${estibaAlertsCajas.slice(0, 5).map(a => `
+                <tr>
+                  <td><strong>${a.zone}</strong></td>
+                  <td>${a.desc}</td>
+                  <td><span class="badge badge-alert">${fmtDec(a.estibas, 2)}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          ${estibaAlertsCajas.length > 5 ? `<div class="kpi-sub" style="text-align:center; margin-top:6px;">Y ${estibaAlertsCajas.length - 5} MÁS EN CAJAS</div>` : ''}
+        ` : `<div class="kpi-sub" style="text-align:center;">SIN ALERTAS EN CAJAS POR ENCIMA DE ${fmtDec(state.estibaAlert,1)} ESTIBAS.</div>`}
+      </div>
+
+      <div class="card">
+        <div style="text-align:center; margin-bottom:8px;">
+          <div class="kpi-label">PERSONAL DEL TURNO</div>
+          <div class="kpi-sub">${state.totalPeople} PERSONAS · MÁX. ${state.maxPerLine} POR LÍNEA Y ${state.maxBoxes} EN CAJAS · PXT ${fmtDec(pxtTurno,0)}</div>
+        </div>
+        <table>
+          <tbody>
+            ${activePersonnel.slice(0, 7).map(p => {
+              const hrs = p.pieces / (p.assigned * p.pppAdj);
+              return `<tr><td><strong>${p.code}</strong> <span class="kpi-sub">${p.assigned} PERS.</span> <span class="badge badge-alert">TERMINA EN ${formatDurationHM(hrs)} H</span></td></tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+        <div class="kpi-label" style="text-align:center; margin:12px 0 6px;">LÍNEAS MÁS CARGADAS · TURNO</div>
+        ${turnoLineTotals.slice(0, 3).map(z => {
+          const pct = m.turnoLinePieces ? (z.pieces / m.turnoLinePieces) * 100 : 0;
+          return `<div class="bar-row"><div><strong>${z.name}</strong> <span class="kpi-sub">${z.code}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(z.pieces/maxTurnoLine*100).toFixed(1)}%"></div></div><div>${fmtPct(pct)}</div></div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function renderSeguimiento(m) {
+  const pxt = m.totalStores ? m.totalPieces / m.totalStores : 0;
+  const bxt = m.totalStores ? (m.totalCajas + m.totalHuevos + m.totalCerveza) / m.totalStores : 0;
+  const pctLine = m.totalPieces ? (m.totalLinePieces / m.totalPieces) * 100 : 0;
+  const pctBox = m.totalPieces ? (m.totalCajas / m.totalPieces) * 100 : 0;
+  const pctEgg = m.totalPieces ? (m.totalHuevos / m.totalPieces) * 100 : 0;
+
+  document.getElementById('tab-seguimiento').innerHTML = `
+    <div class="card">
+      <h2 class="section-title">PLAN DE OPERACIÓN POR OLA</h2>
+      <p class="section-sub">CADA OLA CON SU RUTA, TIENDAS Y CARGA, Y LA HORA ESTIMADA DE SURTIDO, FACTURA Y DESPACHO SEGÚN LA CAPACIDAD POR HORA.</p>
+      <div class="toolbar">
+        <div class="controls-inline">
+          <label class="field">INICIO DE SURTIDO
+            <input type="datetime-local" id="cfg-start-dt" value="${state.startTime}" onchange="updateConfig()" />
+          </label>
+          <button class="btn" onclick="state.startTime = new Date(Date.now() - new Date().getTimezoneOffset()*60000).toISOString().slice(0,16); renderAll();">AHORA</button>
+          <label class="field">CAPACIDAD / HORA
+            <input type="number" value="${state.capPerHour}" min="100" step="50" onchange="state.capPerHour = Math.max(100, num(this.value)); renderAll();" />
+          </label>
+        </div>
+        <button class="btn" onclick="resetWaveOrder()">VOLVER AL ORDEN ORIGINAL</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">TOTAL PIEZAS</div><div class="kpi-val">${fmtInt(m.totalPieces)}</div><div class="kpi-sub">${fmtInt(m.totalLinePieces)} DE LÍNEA</div></div>
+      <div class="kpi"><div class="kpi-label">TIENDAS</div><div class="kpi-val">${fmtInt(m.totalStores)}</div><div class="kpi-sub">${m.waveRows.length} OLAS</div></div>
+      <div class="kpi"><div class="kpi-label">PXT</div><div class="kpi-val">${fmtDec(pxt,1)}</div><div class="kpi-sub">PIEZAS POR TIENDA</div></div>
+      <div class="kpi"><div class="kpi-label">BXT</div><div class="kpi-val">${fmtDec(bxt,1)}</div><div class="kpi-sub">BULTOS POR TIENDA</div></div>
+      <div class="kpi"><div class="kpi-label">MEZCLA</div><div class="kpi-val">${fmtPct(pctLine)}</div><div class="kpi-sub">LÍNEAS · CAJAS ${fmtDec(pctBox,1)}% · HUEVOS ${fmtDec(pctEgg,1)}%</div></div>
+      <div class="kpi"><div class="kpi-label">ÚLTIMO DESPACHO</div><div class="kpi-val">${formatClockPlus(m.endMs, m.startMs)}</div><div class="kpi-sub">${formatDurationHM(m.totalHours)} H DESDE EL INICIO</div></div>
+    </div>
+
+    <div class="card table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>OLA</th><th>RUTA</th><th>TIENDAS</th><th>PROMESA</th><th>PMO</th><th>ZONA</th>
+            <th>LÍNEAS</th><th>CAJAS</th><th>HUEVOS</th><th>CERVEZA</th><th>PIEZAS</th>
+            <th>T. SURTIDO</th><th>HORA SURTIDO</th><th>HORA FACTURA</th><th>HORA DESPACHO</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${m.waveRows.map(r => `
+            <tr draggable="true" ondragstart="onDragStartWave(event, ${r.wave})" ondragend="onDragEndWave(event)" ondragover="event.preventDefault()" ondrop="onDropWave(event, ${r.wave})" class="${r.inTurno ? 'turno-row' : ''}">
+              <td><strong>${r.wave}</strong></td>
+              <td>${r.route}</td>
+              <td>${fmtInt(r.storesCount)}</td>
+              <td>${r.promesa}</td>
+              <td>${r.pmo}</td>
+              <td>${r.zona}</td>
+              <td>${fmtInt(r.linePieces)}</td>
+              <td>${fmtInt(r.cajas)}</td>
+              <td>${r.huevos ? fmtInt(r.huevos) : '–'}</td>
+              <td>${r.cerveza ? fmtInt(r.cerveza) : '–'}</td>
+              <td><strong>${fmtInt(r.totalPieces)}</strong></td>
+              <td>${formatDurationHM(r.hoursSurtido)}</td>
+              <td>${formatClockPlus(r.surtidoMs, m.startMs)}</td>
+              <td>${formatClockPlus(r.facturaMs, m.startMs)}</td>
+              <td><strong>${formatClockPlus(r.despachoMs, m.startMs)}</strong></td>
+            </tr>
+          `).join('')}
+          <tr class="total-row">
+            <td>TOTAL</td><td></td><td>${fmtInt(m.totalStores)}</td><td></td><td></td><td></td>
+            <td>${fmtInt(m.totalLinePieces)}</td><td>${fmtInt(m.totalCajas)}</td><td>${fmtInt(m.totalHuevos)}</td><td>${fmtInt(m.totalCerveza)}</td>
+            <td>${fmtInt(m.totalPieces)}</td><td>${formatDurationHM(m.totalHours)}</td><td colspan="3"></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="kpi-sub" style="text-align:center; margin-top:10px;">MUEVA LAS OLAS SEGÚN LO QUE NECESITE TRANSPORTE: ARRASTRE LA FILA A LA POSICIÓN QUE NECESITE. FACTURA = SURTIDO + ${state.minToFactura} MIN · DESPACHO = FACTURA + ${state.minToDespacho} MIN.</p>
+    </div>`;
+}
+
+function renderBalPiezas(m) {
+  const turnoShare = m.totalLinePieces ? (m.turnoLinePieces / m.totalLinePieces) * 100 : 0;
+  const colTotals = {};
+  const turnoTotals = {};
+  LINE_ZONES.forEach(z => { colTotals[z.code] = 0; turnoTotals[z.code] = 0; });
+
+  m.waveRows.forEach(w => {
+    LINE_ZONES.forEach(z => {
+      const val = w.zones[z.code]?.pieces || 0;
+      colTotals[z.code] += val;
+      if (w.inTurno) turnoTotals[z.code] += val;
+    });
+  });
+
+  const maxLineTotal = Math.max(1, ...LINE_ZONES.map(z => colTotals[z.code]));
+  const maxTurnoTotal = Math.max(1, ...LINE_ZONES.map(z => turnoTotals[z.code]));
+  let topZone = LINE_ZONES[0];
+  LINE_ZONES.forEach(z => { if (colTotals[z.code] > colTotals[topZone.code]) topZone = z; });
+
+  document.getElementById('tab-bal-piezas').innerHTML = `
+    <div class="card">
+      <h2 class="section-title">BALANCE DE SURTIDO · PIEZAS</h2>
+      <p class="section-sub">PIEZAS POR OLA Y POR LÍNEA (ZONA). <span class="badge badge-warn">TURNO</span> OLAS ${state.turnoWaves.join(', ') || 'NINGUNA'} · <a href="#" onclick="switchTab('actualizar');return false;" style="color:var(--red);font-weight:800;">CAMBIAR</a></p>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">PIEZAS · TURNO</div><div class="kpi-val">${fmtInt(m.turnoLinePieces)}</div><div class="kpi-sub">${fmtPct(turnoShare)} DEL TOTAL</div></div>
+      <div class="kpi"><div class="kpi-label">PIEZAS · TOTAL</div><div class="kpi-val">${fmtInt(m.totalLinePieces)}</div><div class="kpi-sub">${m.waveRows.length} OLAS CON PIEZAS</div></div>
+      <div class="kpi"><div class="kpi-label">LÍNEA MÁS CARGADA</div><div class="kpi-val">${topZone.name}</div><div class="kpi-sub">${topZone.code} · ${fmtPct(colTotals[topZone.code] / Math.max(1, m.totalLinePieces) * 100)}</div></div>
+    </div>
+    <div class="card table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>OLA</th>
+            ${LINE_ZONES.map(z => `<th>${z.name}<br><span style="opacity:.7">${z.code}</span></th>`).join('')}
+            <th>TOTAL</th><th>DETALLES</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${m.waveRows.map(w => `
+            <tr draggable="true" ondragstart="onDragStartWave(event, ${w.wave})" ondragend="onDragEndWave(event)" ondragover="event.preventDefault()" ondrop="onDropWave(event, ${w.wave})" class="${w.inTurno ? 'turno-row' : ''}">
+              <td><strong>${w.wave}</strong></td>
+              ${LINE_ZONES.map(z => {
+                const v = w.zones[z.code]?.pieces || 0;
+                const cls = v >= 2000 ? 'heat-3' : v >= 1300 ? 'heat-2' : v >= 1000 ? 'heat-1' : '';
+                return `<td class="${cls}">${v ? fmtInt(v) : '–'}</td>`;
+              }).join('')}
+              <td><strong>${fmtInt(w.linePieces)}</strong></td>
+              <td><button class="btn btn-sm" onclick="openBalanceDetail('piezas', ${w.wave})">DETALLES</button></td>
+            </tr>
+          `).join('')}
+          <tr class="total-row">
+            <td>TOTAL</td>
+            ${LINE_ZONES.map(z => `<td>${fmtInt(colTotals[z.code])}</td>`).join('')}
+            <td><strong>${fmtInt(m.totalLinePieces)}</strong></td>
+            <td><button class="btn btn-sm btn-primary" onclick="openBalanceDetail('piezas', null)">DETALLES</button></td>
+          </tr>
+          <tr class="turno-sum-row">
+            <td>TURNO</td>
+            ${LINE_ZONES.map(z => `<td>${fmtInt(turnoTotals[z.code])}</td>`).join('')}
+            <td>${fmtInt(m.turnoLinePieces)}</td><td></td>
+          </tr>
+          <tr class="pct-row">
+            <td>% TURNO</td>
+            ${LINE_ZONES.map(z => `<td>${fmtPct(turnoTotals[z.code] / Math.max(1, m.turnoLinePieces) * 100)}</td>`).join('')}
+            <td>100%</td><td></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="text-align:center; margin-top:10px;">
+        <span class="kpi-sub">PARA CAMBIAR EL ORDEN DE LAS OLAS, ARRASTRE LA FILA A LA POSICIÓN QUE NECESITE.</span>
+        <button class="btn btn-sm" style="margin-left:8px;" onclick="resetWaveOrder()">VOLVER AL ORDEN ORIGINAL</button>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div style="font-weight:800; text-align:center; margin-bottom:8px;">PARTICIPACIÓN POR LÍNEA · TODAS LAS OLAS</div>
+        ${[...LINE_ZONES].sort((a,b) => colTotals[b.code] - colTotals[a.code]).map(z => {
+          const pct = colTotals[z.code] / Math.max(1, m.totalLinePieces) * 100;
+          return `<div class="bar-row"><div><strong>${z.name}</strong> <span class="kpi-sub">${z.code}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(colTotals[z.code]/maxLineTotal*100).toFixed(1)}%"></div></div><div>${fmtPct(pct)}</div></div>`;
+        }).join('')}
+      </div>
+      <div class="card">
+        <div style="font-weight:800; text-align:center; margin-bottom:8px;">PARTICIPACIÓN POR LÍNEA · TURNO</div>
+        ${[...LINE_ZONES].sort((a,b) => turnoTotals[b.code] - turnoTotals[a.code]).map(z => {
+          const pct = turnoTotals[z.code] / Math.max(1, m.turnoLinePieces) * 100;
+          return `<div class="bar-row"><div><strong>${z.name}</strong> <span class="kpi-sub">${z.code}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(turnoTotals[z.code]/maxTurnoTotal*100).toFixed(1)}%"></div></div><div>${fmtPct(pct)}</div></div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function renderBalCajas(m) {
+  const turnoBoxSum = m.turnoCajas + m.turnoHuevos + m.turnoCerveza;
+  const totalBoxSum = m.totalCajas + m.totalHuevos + m.totalCerveza;
+
+  document.getElementById('tab-bal-cajas').innerHTML = `
+    <div class="card">
+      <h2 class="section-title">BALANCE DE CAJAS</h2>
+      <p class="section-sub">CAJAS, HUEVOS Y CERVEZA POR OLA. <span class="badge badge-warn">TURNO</span> OLAS ${state.turnoWaves.join(', ') || 'NINGUNA'} · <a href="#" onclick="switchTab('actualizar');return false;" style="color:var(--red);font-weight:800;">CAMBIAR</a></p>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">CAJAS · TURNO</div><div class="kpi-val">${fmtInt(m.turnoCajas)}</div><div class="kpi-sub">${fmtInt(m.totalCajas)} EN TOTAL</div></div>
+      <div class="kpi"><div class="kpi-label">HUEVOS · TURNO</div><div class="kpi-val">${fmtInt(m.turnoHuevos)}</div><div class="kpi-sub">${fmtInt(m.totalHuevos)} EN TOTAL</div></div>
+      <div class="kpi"><div class="kpi-label">CERVEZA · TURNO</div><div class="kpi-val">${fmtInt(m.turnoCerveza)}</div><div class="kpi-sub">${fmtInt(m.totalCerveza)} EN TOTAL</div></div>
+    </div>
+    <div class="card table-wrap">
+      <table>
+        <thead><tr><th>OLA</th><th>CAJAS</th><th>HUEVOS</th><th>CERVEZA</th><th>TOTAL</th><th>DETALLES</th></tr></thead>
+        <tbody>
+          ${m.waveRows.map(w => {
+            const tot = w.cajas + w.huevos + w.cerveza;
+            return `<tr draggable="true" ondragstart="onDragStartWave(event, ${w.wave})" ondragend="onDragEndWave(event)" ondragover="event.preventDefault()" ondrop="onDropWave(event, ${w.wave})" class="${w.inTurno ? 'turno-row' : ''}">
+              <td><strong>${w.wave}</strong></td>
+              <td class="${w.cajas >= 600 ? 'heat-3' : w.cajas >= 450 ? 'heat-2' : w.cajas >= 300 ? 'heat-1' : ''}">${fmtInt(w.cajas)}</td>
+              <td class="${w.huevos >= 100 ? 'heat-1' : ''}">${w.huevos ? fmtInt(w.huevos) : '–'}</td>
+              <td class="${w.cerveza >= 450 ? 'heat-2' : w.cerveza >= 200 ? 'heat-1' : ''}">${w.cerveza ? fmtInt(w.cerveza) : '–'}</td>
+              <td><strong>${fmtInt(tot)}</strong></td>
+              <td><button class="btn btn-sm" onclick="openBalanceDetail('cajas', ${w.wave})">DETALLES</button></td>
+            </tr>`;
+          }).join('')}
+          <tr class="total-row">
+            <td>TOTAL</td><td>${fmtInt(m.totalCajas)}</td><td>${fmtInt(m.totalHuevos)}</td><td>${fmtInt(m.totalCerveza)}</td>
+            <td><strong>${fmtInt(totalBoxSum)}</strong></td>
+            <td><button class="btn btn-sm btn-primary" onclick="openBalanceDetail('cajas', null)">DETALLES</button></td>
+          </tr>
+          <tr class="turno-sum-row"><td>TURNO</td><td>${fmtInt(m.turnoCajas)}</td><td>${fmtInt(m.turnoHuevos)}</td><td>${fmtInt(m.turnoCerveza)}</td><td>${fmtInt(turnoBoxSum)}</td><td></td></tr>
+          <tr class="pct-row">
+            <td>% TURNO</td>
+            <td>${fmtPct(m.turnoCajas / Math.max(1, turnoBoxSum) * 100)}</td>
+            <td>${fmtPct(m.turnoHuevos / Math.max(1, turnoBoxSum) * 100)}</td>
+            <td>${fmtPct(m.turnoCerveza / Math.max(1, turnoBoxSum) * 100)}</td>
+            <td>100%</td><td></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="text-align:center; margin-top:10px;">
+        <span class="kpi-sub">PARA CAMBIAR EL ORDEN DE LAS OLAS, ARRASTRE LA FILA A LA POSICIÓN QUE NECESITE.</span>
+        <button class="btn btn-sm" style="margin-left:8px;" onclick="resetWaveOrder()">VOLVER AL ORDEN ORIGINAL</button>
+      </div>
+    </div>`;
+}
+
+function renderEmpaques(m) {
+  const colCn = {};
+  const turnoCn = {};
+  LINE_ZONES.forEach(z => { colCn[z.code] = 0; turnoCn[z.code] = 0; });
+  m.waveRows.forEach(w => {
+    LINE_ZONES.forEach(z => {
+      const cnt = w.zones[z.code]?.containers?.size || 0;
+      colCn[z.code] += cnt;
+      if (w.inTurno) turnoCn[z.code] += cnt;
+    });
+  });
+  const totalCnAll = LINE_ZONES.reduce((a, z) => a + colCn[z.code], 0);
+  const totalCnTurno = LINE_ZONES.reduce((a, z) => a + turnoCn[z.code], 0);
+  const pzPorCn = m.totalLinePieces / Math.max(1, totalCnAll);
+  const maxCnAll = Math.max(1, ...LINE_ZONES.map(z => colCn[z.code]));
+  const maxCnTurno = Math.max(1, ...LINE_ZONES.map(z => turnoCn[z.code]));
+
+  document.getElementById('tab-empaques').innerHTML = `
+    <div class="card">
+      <h2 class="section-title">EMPAQUES · CANASTILLAS (CN)</h2>
+      <p class="section-sub">CANASTILLAS DISTINTAS POR OLA Y LÍNEA. <span class="badge badge-warn">TURNO</span> OLAS ${state.turnoWaves.join(', ') || 'NINGUNA'} · <a href="#" onclick="switchTab('actualizar');return false;" style="color:var(--red);font-weight:800;">CAMBIAR</a></p>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">CANASTILLAS REQUERIDAS · TURNO</div><div class="kpi-val">${fmtInt(totalCnTurno)}</div><div class="kpi-sub">${fmtInt(totalCnAll)} EN TODAS LAS OLAS</div></div>
+      <div class="kpi"><div class="kpi-label">PIEZAS POR CANASTILLA</div><div class="kpi-val">${fmtDec(pzPorCn, 1)}</div><div class="kpi-sub">PROMEDIO GENERAL</div></div>
+    </div>
+    <div class="card table-wrap">
+      <table>
+        <thead>
+          <tr><th>OLA</th>${LINE_ZONES.map(z => `<th>${z.name}<br><span style="opacity:.7">${z.code}</span></th>`).join('')}<th>TOTAL</th></tr>
+        </thead>
+        <tbody>
+          ${m.waveRows.map(w => {
+            const sumRow = LINE_ZONES.reduce((a, z) => a + (w.zones[z.code]?.containers?.size || 0), 0);
+            return `<tr draggable="true" ondragstart="onDragStartWave(event, ${w.wave})" ondragend="onDragEndWave(event)" ondragover="event.preventDefault()" ondrop="onDropWave(event, ${w.wave})" class="${w.inTurno ? 'turno-row' : ''}">
+              <td><strong>${w.wave}</strong></td>
+              ${LINE_ZONES.map(z => {
+                const c = w.zones[z.code]?.containers?.size || 0;
+                return `<td class="${c >= 120 ? 'heat-3' : c >= 90 ? 'heat-2' : c >= 60 ? 'heat-1' : ''}">${c ? fmtInt(c) : '–'}</td>`;
+              }).join('')}
+              <td><strong>${fmtInt(sumRow)}</strong></td>
+            </tr>`;
+          }).join('')}
+          <tr class="total-row"><td>TOTAL</td>${LINE_ZONES.map(z => `<td>${fmtInt(colCn[z.code])}</td>`).join('')}<td>${fmtInt(totalCnAll)}</td></tr>
+          <tr class="turno-sum-row"><td>TURNO</td>${LINE_ZONES.map(z => `<td>${fmtInt(turnoCn[z.code])}</td>`).join('')}<td>${fmtInt(totalCnTurno)}</td></tr>
+          <tr class="pct-row">
+            <td>% TURNO</td>
+            ${LINE_ZONES.map(z => `<td>${fmtPct(turnoCn[z.code] / Math.max(1, totalCnTurno) * 100)}</td>`).join('')}
+            <td>100%</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="text-align:center; margin-top:10px;">
+        <span class="kpi-sub">PARA CAMBIAR EL ORDEN DE LAS OLAS, ARRASTRE LA FILA A LA POSICIÓN QUE NECESITE.</span>
+        <button class="btn btn-sm" style="margin-left:8px;" onclick="resetWaveOrder()">VOLVER AL ORDEN ORIGINAL</button>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div style="font-weight:800; text-align:center; margin-bottom:8px;">PARTICIPACIÓN POR LÍNEA · TODAS LAS OLAS</div>
+        ${[...LINE_ZONES].sort((a,b) => colCn[b.code] - colCn[a.code]).map(z => {
+          const pct = colCn[z.code] / Math.max(1, totalCnAll) * 100;
+          return `<div class="bar-row"><div><strong>${z.name}</strong> <span class="kpi-sub">${z.code}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(colCn[z.code]/maxCnAll*100).toFixed(1)}%"></div></div><div>${fmtPct(pct)}</div></div>`;
+        }).join('')}
+      </div>
+      <div class="card">
+        <div style="font-weight:800; text-align:center; margin-bottom:8px;">PARTICIPACIÓN POR LÍNEA · TURNO</div>
+        ${[...LINE_ZONES].sort((a,b) => turnoCn[b.code] - turnoCn[a.code]).map(z => {
+          const pct = turnoCn[z.code] / Math.max(1, totalCnTurno) * 100;
+          return `<div class="bar-row"><div><strong>${z.name}</strong> <span class="kpi-sub">${z.code}</span></div><div class="bar-track"><div class="bar-fill" style="width:${(turnoCn[z.code]/maxCnTurno*100).toFixed(1)}%"></div></div><div>${fmtPct(pct)}</div></div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function renderPersonal(m) {
+  const { pxtTurno, factor, calc } = calcPersonnel(m);
+  const totalReq = calc.reduce((a,x) => a + x.req, 0);
+  const totalAssigned = calc.reduce((a,x) => a + x.assigned, 0);
+  const slowest = [...calc].filter(x => x.assigned > 0).sort((a,b) => (b.pieces / (b.assigned * b.pppAdj)) - (a.pieces / (a.assigned * a.pppAdj)))[0];
+
+  const suggestedShifts = [];
+  let accWaves = [], accPieces = 0, accStores = new Set();
+  for (const w of m.waveRows) {
+    const wNoEggs = w.linePieces + w.cajas + w.cerveza;
+    if (accWaves.length > 0 && accPieces + wNoEggs > state.metaMax && accPieces >= state.metaMin * 0.85) {
+      suggestedShifts.push({ waves: [...accWaves], pieces: accPieces, stores: accStores.size });
+      accWaves = []; accPieces = 0; accStores = new Set();
+    }
+    accWaves.push(w.wave);
+    accPieces += wNoEggs;
+    w.storesSet.forEach(s => accStores.add(s));
+  }
+  if (accWaves.length) suggestedShifts.push({ waves: [...accWaves], pieces: accPieces, stores: accStores.size });
+
+  const overDiff = m.turnoPiecesNoEggs - state.metaMax;
+  const underDiff = state.metaMin - m.turnoPiecesNoEggs;
+  let rangeBanner = '';
+  if (overDiff > 0) {
+    rangeBanner = `<div class="banner-warn" style="background:var(--alert-bg);color:var(--alert-text);text-align:center;">EL TURNO TIENE ${fmtInt(m.turnoPiecesNoEggs)} PIEZAS Y DEBE QUEDAR ENTRE ${fmtInt(state.metaMin)} Y ${fmtInt(state.metaMax)}. USE UNO DE LOS TURNOS SUGERIDOS DE ABAJO.</div>`;
+  } else if (underDiff > 0 && m.turnoPiecesNoEggs > 0) {
+    rangeBanner = `<div class="banner-warn" style="text-align:center;">EL TURNO TIENE ${fmtInt(m.turnoPiecesNoEggs)} PIEZAS (FALTAN ${fmtInt(underDiff)} PARA ${fmtInt(state.metaMin)}).</div>`;
+  }
+
+  document.getElementById('tab-personal').innerHTML = `
+    <div class="card">
+      <h2 class="section-title">CUADRE DE PERSONAL POR LÍNEA</h2>
+      <p class="section-sub">CÓMO REPARTIR LAS ${state.totalPeople} PERSONAS DEL TURNO: NUNCA MÁS DE ${state.maxPerLine} EN UNA LÍNEA NI MÁS DE ${state.maxBoxes} EN CAJAS.</p>
+      <div class="controls-inline" style="justify-content:center; margin-bottom:10px;">
+        <label class="field">PERSONAS <input type="number" value="${state.totalPeople}" min="1" max="100" onchange="state.totalPeople=num(this.value);renderAll();" /></label>
+        <label class="field">MÁX. POR LÍNEA <input type="number" value="${state.maxPerLine}" min="1" max="10" onchange="state.maxPerLine=num(this.value);renderAll();" /></label>
+        <label class="field">MÁX. EN CAJAS <input type="number" value="${state.maxBoxes}" min="1" max="10" onchange="state.maxBoxes=num(this.value);renderAll();" /></label>
+        <label class="field">HORAS DEL TURNO <input type="number" step="0.05" value="${state.shiftHours}" onchange="state.shiftHours=num(this.value);renderAll();" /></label>
+        <label class="field">MÍNIMO (ASEO Y OPT) <input type="number" step="0.01" value="${state.minAseoOpt}" onchange="state.minAseoOpt=num(this.value);renderAll();" /></label>
+      </div>
+      <div style="text-align:center;"><span class="badge badge-warn">TURNO</span> OLAS ${state.turnoWaves.join(', ') || 'NINGUNA'} · <a href="#" onclick="switchTab('actualizar');return false;" style="color:var(--red);font-weight:800;">CAMBIAR</a></div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">PIEZAS DEL TURNO</div><div class="kpi-val red">${fmtInt(m.turnoPiecesNoEggs)}</div><div class="kpi-sub">META ${fmtInt(state.metaMin/1000)} A ${fmtInt(state.metaMax/1000)} MIL · SIN HUEVOS</div></div>
+      <div class="kpi"><div class="kpi-label">PXT DEL TURNO</div><div class="kpi-val">${fmtDec(pxtTurno,0)}</div><div class="kpi-sub"><span class="badge badge-ok">PRODUCTIVO</span> PPP AL ${fmtDec(factor*100,0)}%</div></div>
+      <div class="kpi"><div class="kpi-label">PERSONAS REQUERIDAS</div><div class="kpi-val">${fmtDec(totalReq,1)}</div><div class="kpi-sub">${totalAssigned} ASIGNADAS</div></div>
+      <div class="kpi"><div class="kpi-label">LÍNEA QUE MÁS SE DEMORA</div><div class="kpi-val">${slowest ? slowest.code : '-'}</div><div class="kpi-sub">${slowest ? formatDurationHM(slowest.pieces/(slowest.assigned*slowest.pppAdj))+' H' : ''}</div></div>
+    </div>
+
+    ${rangeBanner}
+
+    <div class="card table-wrap">
+      <table>
+        <thead><tr><th>LÍNEA</th><th>PPP BASE</th><th>PPP CON PXT</th><th>PIEZAS TURNO</th><th>PERS. REQUERIDAS</th><th>PERS. SUGERIDAS</th><th>HORAS PARA TERMINAR</th><th>PIEZAS POR PERSONA</th><th>ESTADO</th></tr></thead>
+        <tbody>
+          ${calc.map(r => {
+            const cap = r.code === 'CA' ? state.maxBoxes : state.maxPerLine;
+            const hrs = r.assigned > 0 ? r.pieces / (r.assigned * r.pppAdj) : 0;
+            const pzPers = r.assigned > 0 ? r.pieces / r.assigned : 0;
+            let badge = '';
+            if (r.belowThreshold) badge = '<span class="badge badge-ok">NO REQUIERE PERSONAL</span>';
+            else if (r.assigned === 0) badge = '<span class="badge badge-ok">NO REQUIERE PERSONAL</span>';
+            else if (r.assigned >= cap && hrs > state.shiftHours) badge = `<span class="badge badge-alert">EN EL TOPE DE ${cap}; TERMINA EN ${formatDurationHM(hrs)} H</span>`;
+            else if (hrs <= state.shiftHours * 0.9) badge = '<span class="badge badge-ok">ALCANZA</span>';
+            else if (hrs <= state.shiftHours) badge = '<span class="badge badge-warn">JUSTO</span>';
+            else badge = `<span class="badge badge-alert">TERMINA EN ${formatDurationHM(hrs)} H</span>`;
+            return `<tr>
+              <td><strong>${r.name}</strong></td>
+              <td><input type="number" style="width:62px" value="${r.pppBase}" onchange="state.pppBase['${r.code}']=num(this.value);renderAll();" /></td>
+              <td>${r.pppAdj}</td>
+              <td>${fmtInt(r.pieces)}</td>
+              <td>${fmtDec(r.req,2)}</td>
+              <td><strong>${r.belowThreshold ? 0 : r.assigned}</strong> <span class="kpi-sub">/ ${cap}</span></td>
+              <td>${r.assigned > 0 ? formatDurationHM(hrs) : '–'}</td>
+              <td>${r.assigned > 0 ? fmtInt(pzPers) : '–'}</td>
+              <td>${badge}</td>
+            </tr>`;
+          }).join('')}
+          <tr class="total-row">
+            <td>TOTAL</td><td></td><td></td><td>${fmtInt(m.turnoPiecesNoEggs)}</td>
+            <td>${fmtDec(totalReq,2)}</td><td>${totalAssigned}</td>
+            <td>${slowest ? formatDurationHM(slowest.pieces/(slowest.assigned*slowest.pppAdj)) : '–'}</td>
+            <td>${totalAssigned > 0 ? fmtInt(m.turnoPiecesNoEggs / totalAssigned) : '–'}</td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card table-wrap">
+      <div style="text-align:center; margin-bottom:10px;">
+        <strong>TURNOS SUGERIDOS · ${fmtInt(state.metaMin/1000)} A ${fmtInt(state.metaMax/1000)} MIL PIEZAS</strong>
+        <div class="kpi-sub">LAS OLAS SE TOMAN EN EL ORDEN DE LA SECUENCIA (SIN HUEVOS).</div>
+      </div>
+      <table>
+        <thead><tr><th>TURNO</th><th>OLAS</th><th>PIEZAS</th><th>TIENDAS</th><th>PXT</th><th>META</th><th>PRODUCTIVIDAD</th><th></th></tr></thead>
+        <tbody>
+          ${suggestedShifts.map((s, idx) => {
+            const pxtS = s.stores ? s.pieces / s.stores : 0;
+            const isCurr = JSON.stringify([...s.waves].sort()) === JSON.stringify([...state.turnoWaves].sort());
+            let metaBadge = '<span class="badge badge-ok">EN META</span>';
+            if (s.pieces > state.metaMax) metaBadge = `<span class="badge badge-alert">PASA POR ${fmtInt(s.pieces - state.metaMax)}</span>`;
+            else if (s.pieces < state.metaMin) metaBadge = `<span class="badge badge-warn">FALTAN ${fmtInt(state.metaMin - s.pieces)}</span>`;
+            return `<tr>
+              <td><strong>${idx + 1}</strong></td>
+              <td>${s.waves.join(', ')}</td>
+              <td><strong>${fmtInt(s.pieces)}</strong></td>
+              <td>${s.stores}</td>
+              <td>${fmtDec(pxtS, 0)}</td>
+              <td>${metaBadge}</td>
+              <td><span class="badge ${pxtS >= state.pxtLow ? 'badge-ok' : 'badge-warn'}">${pxtS >= state.pxtLow ? 'PRODUCTIVO' : 'BAJO PXT'}</span></td>
+              <td>${isCurr ? '<span class="badge badge-warn">ES EL TURNO ACTUAL</span>' : `<button class="btn btn-sm" onclick="useTurnoSet([${s.waves.join(',')}])">USAR COMO TURNO</button>`}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div style="text-align:center; font-weight:800; margin-bottom:10px;">PRODUCTIVIDAD SEGÚN PXT</div>
+      <div class="controls-inline" style="justify-content:center;">
+        <label class="field">PXT ALTO DESDE <input type="number" value="${state.pxtHigh}" onchange="state.pxtHigh=num(this.value);renderAll();" /></label>
+        <label class="field">PXT BAJO POR DEBAJO DE <input type="number" value="${state.pxtLow}" onchange="state.pxtLow=num(this.value);renderAll();" /></label>
+        <label class="field">PPP ENTRE AMBOS (%) <input type="number" value="${state.pctMid}" onchange="state.pctMid=num(this.value);renderAll();" /></label>
+        <label class="field">PPP CON PXT BAJO (%) <input type="number" value="${state.pctLow}" onchange="state.pctLow=num(this.value);renderAll();" /></label>
+        <label class="field">META MÍNIMA <input type="number" value="${state.metaMin}" step="500" onchange="state.metaMin=num(this.value);renderAll();" /></label>
+        <label class="field">META MÁXIMA <input type="number" value="${state.metaMax}" step="500" onchange="state.metaMax=num(this.value);renderAll();" /></label>
+      </div>
+    </div>`;
+}
+
+function renderCanastillas(m) {
+  const rows = LINE_ZONES.map(z => {
+    const pz = m.turnoRows.reduce((a,r) => a + (r.zones[z.code]?.pieces || 0), 0);
+    const cn = m.turnoRows.reduce((a,r) => a + (r.zones[z.code]?.containers?.size || 0), 0);
+    const pct = m.turnoLinePieces ? (pz / m.turnoLinePieces) * 100 : 0;
+    const nOlas = Math.max(1, m.turnoRows.length);
+    return { ...z, pz, cn, pct, pzOla: pz / nOlas, cnOla: cn / nOlas, pzCn: pz / Math.max(1, cn) };
+  });
+  const totPz = rows.reduce((a,r) => a + r.pz, 0);
+  const totCn = rows.reduce((a,r) => a + r.cn, 0);
+
+  document.getElementById('tab-canastillas').innerHTML = `
+    <div class="card">
+      <h2 class="section-title">AUDITORÍA DE CANASTILLAS</h2>
+      <p class="section-sub">PIEZAS Y CANASTILLAS DEL TURNO POR LÍNEA, CON EL PESO DE CADA LÍNEA. <span class="badge badge-warn">TURNO</span> OLAS ${state.turnoWaves.join(', ') || 'NINGUNA'} · <a href="#" onclick="switchTab('actualizar');return false;" style="color:var(--red);font-weight:800;">CAMBIAR</a></p>
+    </div>
+    <div class="card table-wrap">
+      <table>
+        <thead><tr><th>LÍNEA</th><th>PIEZAS</th><th>CANASTILLAS</th><th>%</th><th>PIEZAS POR OLA</th><th>CN POR OLA</th><th>PIEZAS POR CANASTILLA</th></tr></thead>
+        <tbody>
+          ${rows.map(r => `<tr>
+            <td><strong>${r.name}</strong> <span class="kpi-sub">${r.code}</span></td>
+            <td>${fmtInt(r.pz)}</td><td>${fmtInt(r.cn)}</td><td>${fmtPct(r.pct)}</td>
+            <td>${fmtDec(r.pzOla,1)}</td><td>${fmtDec(r.cnOla,2)}</td><td><strong>${fmtDec(r.pzCn,1)}</strong></td>
+          </tr>`).join('')}
+          <tr class="total-row">
+            <td>TOTAL</td><td>${fmtInt(totPz)}</td><td>${fmtInt(totCn)}</td><td>100%</td>
+            <td>${fmtDec(totPz / Math.max(1, m.turnoRows.length),1)}</td>
+            <td>${fmtDec(totCn / Math.max(1, m.turnoRows.length),2)}</td>
+            <td>${fmtDec(totPz / Math.max(1, totCn),1)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderTop(m) {
+  const allZoneChips = ['E4 OPT','F1 VAPER','E8 PAPAS','F2 PAPAS','F3 DULCES','F4 ASEO','F5 MER','F6 GALL','F7 RAMO','F8 LICOR','F9 INS','CA CAJAS','CH HUEVOS','CV CERVEZA'];
+  const selectedWaveSet = new Set(state.topWaves);
+  const items = m.topItemsList
+    .map(it => {
+      const code = it.zone;
+      const activeZone = state.topZones.some(z => z.startsWith(code));
+      const filteredWaves = state.waveOrder.filter(w => selectedWaveSet.has(w) && it.waves.has(w));
+      const extraWaves = [...it.waves].filter(w => selectedWaveSet.has(w) && !state.waveOrder.includes(w)).sort((a,b) => a - b);
+      const visibleWaves = [...filteredWaves, ...extraWaves];
+      const waveMatch = visibleWaves.length > 0;
+      const q = state.topSearch.trim().toLowerCase();
+      const textMatch = !q || it.desc.toLowerCase().includes(q) || it.itemId.toLowerCase().includes(q);
+      if (!activeZone || !waveMatch || !textMatch) return null;
+      const cajasEst = it.boxes > 0 ? it.boxes : (it.stdCasepack > 0 ? it.pieces / it.stdCasepack : 0);
+      const cajasXEstiba = 40;
+      const estibas = cajasEst / cajasXEstiba;
+      return { ...it, visibleWaves, cajasEst, cajasXEstiba, estibas, alert: estibas >= state.estibaAlert };
+    })
+    .filter(Boolean)
+    .filter(it => !state.topOnlyAlerts || it.alert)
+    .sort((a,b) => state.topSort === 'cajas' ? b.cajasEst - a.cajasEst : state.topSort === 'piezas' ? b.pieces - a.pieces : b.estibas - a.estibas);
+
+  const alertsList = items.filter(x => x.alert);
+  const totalEstibas = items.reduce((a,x) => a + x.estibas, 0);
+  const totalBoxes = items.reduce((a,x) => a + x.cajasEst, 0);
+  const totalPieces = items.reduce((a,x) => a + x.pieces, 0);
+
+  document.getElementById('tab-top').innerHTML = `
+    <div class="card">
+      <h2 class="section-title">TOP DE CAJAS POR ESTIBA</h2>
+      <p class="section-sub">CUÁNTAS ESTIBAS OCUPA CADA ARTÍCULO. LOS ARTÍCULOS CON MÁS DE <strong>${fmtDec(state.estibaAlert,1)}</strong> ESTIBAS SALEN EN ROJO.</p>
+      ${alertsList.length ? `<div class="banner-warn" style="background:var(--alert-bg);color:var(--alert-text);font-size:11px;text-align:center;"><strong>${alertsList.length} ARTÍCULOS PASAN DE ${fmtDec(state.estibaAlert,1)} ESTIBAS</strong> CON LOS FILTROS ACTUALES: ${alertsList.slice(0,4).map(a => `${a.desc} (${fmtDec(a.estibas,2)})`).join(', ')}...</div>` : ''}
+
+      <div style="margin-bottom:8px;">
+        <span class="kpi-label">ZONAS:</span>
+        <button class="btn btn-sm" onclick="state.topZones=[${allZoneChips.map(c=>`'${c}'`).join(',')}];renderAll();">TODAS</button>
+        <button class="btn btn-sm" onclick="state.topZones=[];renderAll();">NINGUNA</button>
+        <div class="chip-group">
+          ${allZoneChips.map(ch => {
+            const active = state.topZones.includes(ch);
+            return `<button class="chip ${active?'active':''}" onclick="toggleTopZone('${ch}')">${ch}</button>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <span class="kpi-label">OLAS:</span>
+        <button class="btn btn-sm" onclick="state.topWaves=[...state.waveOrder];renderAll();">TODAS</button>
+        <button class="btn btn-sm" onclick="state.topWaves=[];renderAll();">NINGUNA</button>
+        <button class="btn btn-sm" onclick="state.topWaves=[...state.turnoWaves];renderAll();">SOLO TURNO</button>
+        <div class="chip-group">
+          ${state.waveOrder.map(w => {
+            const active = state.topWaves.includes(w);
+            return `<button class="chip ${active?'active':''}" onclick="toggleTopWave(${w})">${w}</button>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="controls-inline" style="justify-content:center;">
+        <label class="field">ALERTA DESDE (ESTIBAS)
+          <input type="number" step="0.1" value="${state.estibaAlert}" onchange="state.estibaAlert=num(this.value);renderAll();" />
+        </label>
+        <label class="field">BUSCAR
+          <input type="text" placeholder="DESCRIPCIÓN O CÓDIGO" value="${state.topSearch}" oninput="state.topSearch=up(this.value);renderTop(computeModel());autoAdjustTables();" />
+        </label>
+        <label class="field">ORDENAR POR
+          <select onchange="state.topSort=this.value;renderAll();">
+            <option value="estibas" ${state.topSort==='estibas'?'selected':''}>ESTIBAS</option>
+            <option value="cajas" ${state.topSort==='cajas'?'selected':''}>CAJAS</option>
+            <option value="piezas" ${state.topSort==='piezas'?'selected':''}>PIEZAS</option>
+          </select>
+        </label>
+        <button class="btn ${state.topOnlyAlerts?'btn-primary':''}" style="margin-top:14px;" onclick="state.topOnlyAlerts=!state.topOnlyAlerts;renderAll();">SOLO ALERTAS</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">ALERTAS > ${fmtDec(state.estibaAlert,1)} ESTIBAS</div><div class="kpi-val red">${fmtInt(alertsList.length)}</div><div class="kpi-sub">DE ${fmtInt(items.length)} ARTÍCULOS</div></div>
+      <div class="kpi"><div class="kpi-label">ESTIBAS</div><div class="kpi-val">${fmtDec(totalEstibas,1)}</div></div>
+      <div class="kpi"><div class="kpi-label">CAJAS</div><div class="kpi-val">${fmtInt(totalBoxes)}</div></div>
+      <div class="kpi"><div class="kpi-label">PIEZAS</div><div class="kpi-val">${fmtInt(totalPieces)}</div></div>
+    </div>
+
+    <div class="card table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>DESCRIPCIÓN</th><th>CÓDIGO</th><th>PIEZAS</th><th>CAJA X</th><th>CAJAS</th><th>CAJAS X ESTIBA</th><th>ESTIBAS</th><th>TIENDAS</th><th>OLAS</th></tr></thead>
+        <tbody>
+          ${items.slice(0, 80).map((it, idx) => `
+            <tr class="${it.alert ? 'heat-1' : ''}">
+              <td>${idx + 1}</td>
+              <td><strong>${it.desc}</strong></td>
+              <td>${it.itemId}</td>
+              <td>${fmtInt(it.pieces)}</td>
+              <td>${it.stdCasepack || '–'}</td>
+              <td><strong>${fmtDec(it.cajasEst, 1)}</strong></td>
+              <td>${it.cajasXEstiba}</td>
+              <td style="${it.alert?'color:#B81118;font-weight:800':''}">${fmtDec(it.estibas, 2)}</td>
+              <td>${it.stores.size}</td>
+              <td>${it.visibleWaves.join(', ')}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function toggleTopZone(ch) {
+  if (state.topZones.includes(ch)) state.topZones = state.topZones.filter(x => x !== ch);
+  else state.topZones.push(ch);
+  renderAll();
+}
+
+function toggleTopWave(w) {
+  if (state.topWaves.includes(w)) state.topWaves = state.topWaves.filter(x => x !== w);
+  else state.topWaves.push(w);
+  renderAll();
+}
+
+function renderTiendas(m) {
+  const missingPmg = m.storesList.filter(s => !s.inPmg).length;
+  const q = state.storeSearch.trim().toLowerCase();
+  const filtered = m.storesList.filter(s => !q || s.loc.toLowerCase().includes(q) || s.tienda.toLowerCase().includes(q) || s.ruta.toLowerCase().includes(q));
+
+  document.getElementById('tab-tiendas').innerHTML = `
+    <div class="card">
+      <h2 class="section-title">TIENDAS</h2>
+      <p class="section-sub">CARGA DE CADA TIENDA EN LA BASE CON LOS DATOS COMPLEMENTARIOS. REGISTROS DISPONIBLES: <strong>${fmtInt(state.pmgRows.length)} TIENDAS</strong>.</p>
+      ${missingPmg > 0 ? `<div class="banner-warn" style="text-align:center;">${missingPmg} DE ${m.storesList.length} TIENDAS NO TIENEN DATOS COMPLEMENTARIOS. USE EL BOTÓN ACTUALIZAR PARA CARGARLOS.</div>` : ''}
+      <div class="toolbar">
+        <input type="text" placeholder="CÓDIGO, NOMBRE, RUTA U OLA" value="${state.storeSearch}" oninput="state.storeSearch=up(this.value);renderTiendas(computeModel());autoAdjustTables();" />
+        <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">SUBIR ARCHIVO</button>
+      </div>
+    </div>
+    <div class="card table-wrap">
+      <table>
+        <thead><tr><th>LOC</th><th>TIENDA</th><th>RUTA</th><th>OLAS</th><th>PIEZAS</th><th>CAJAS</th><th>HUEVOS</th><th>CN</th><th>PMG</th><th>PROMESA</th><th>PMO</th><th>ZONA</th></tr></thead>
+        <tbody>
+          ${filtered.map(s => `
+            <tr>
+              <td><strong>${s.loc}</strong></td>
+              <td>${s.inPmg ? s.tienda : '<span class="badge badge-warn">NO ESTÁ EN PMG</span>'}</td>
+              <td>${s.ruta}</td><td>${s.olas}</td><td><strong>${fmtInt(s.piezas)}</strong></td><td>${fmtInt(s.cajas)}</td>
+              <td>${s.huevos ? fmtInt(s.huevos) : '–'}</td><td>${s.cn}</td>
+              <td>${s.pmg}</td><td>${s.promesa}</td><td>${s.pmo}</td><td>${s.zona}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderActualizar(m) {
+  document.getElementById('data-info-box').innerHTML = `
+    <div><strong>BASE:</strong> ${state.baseMeta ? `${fmtInt(state.baseMeta.lines)} LÍNEAS · ${state.baseMeta.name} (${state.baseMeta.updatedAt})` : 'SIN CARGAR'}</div>
+    <div><strong>COMPLEMENTO:</strong> ${state.pmgMeta ? `${fmtInt(state.pmgMeta.stores)} TIENDAS · ${state.pmgMeta.name} (${state.pmgMeta.updatedAt})` : `${fmtInt(state.pmgRows.length)} TIENDAS`}</div>
+    <div><strong>GUARDADO:</strong> SESIÓN LOCAL ACTIVA EN NAVEGADOR</div>
+  `;
+
+  document.getElementById('wave-sequence-card').innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+      <div><strong>SECUENCIA DE OLAS Y TURNO</strong><div class="kpi-sub">ARRASTRE LA FILA O USE LAS FLECHAS PARA CAMBIAR EL ORDEN. MARQUE LAS OLAS QUE ENTRAN EN EL TURNO.</div></div>
+      <button class="btn" onclick="resetWaveOrder()">RESTABLECER</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>ORDEN</th><th>OLA</th><th>RUTA</th><th>PIEZAS</th><th>TURNO</th></tr></thead>
+        <tbody>
+          ${m.waveRows.map((w, idx) => `
+            <tr draggable="true" ondragstart="onDragStartWave(event, ${w.wave})" ondragend="onDragEndWave(event)" ondragover="event.preventDefault()" ondrop="onDropWave(event, ${w.wave})">
+              <td>${idx + 1}</td>
+              <td>
+                <button class="btn btn-sm" onclick="moveWave(${w.wave}, -1)" ${idx===0?'disabled':''}>↑</button>
+                <button class="btn btn-sm" onclick="moveWave(${w.wave}, 1)" ${idx===m.waveRows.length-1?'disabled':''}>↓</button>
+              </td>
+              <td><strong>${w.wave}</strong></td>
+              <td>${w.route}</td>
+              <td>${fmtInt(w.totalPieces)}</td>
+              <td>
+                <button class="btn btn-sm ${w.inTurno ? 'btn-primary' : ''}" onclick="toggleTurnoWave(${w.wave})">
+                  ${w.inTurno ? 'EN TURNO' : 'FUERA'}
+                </button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+renderAll();
+</script>
+</body>
+</html>
